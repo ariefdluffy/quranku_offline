@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -60,120 +58,129 @@ class LengkapPage extends ConsumerWidget {
             child: Padding(
               padding: const EdgeInsets.all(14.0),
               child: SingleChildScrollView(
-                child: RichText(
-                  textAlign: TextAlign.justify,
-                  textDirection: TextDirection.rtl,
-                  text: TextSpan(
-                    children: currentAyahList.expand((ayah) {
-                      // Ambil nama Latin surah dari surahList
-                      String namaSurah = surahList
-                          .firstWhere((surah) => surah.nomor == ayah.nomorSurah)
-                          .namaLatin;
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: RichText(
+                    textAlign: TextAlign.justify,
+                    textDirection: TextDirection.rtl,
+                    text: TextSpan(
+                      children: currentAyahList.expand((ayah) {
+                        // Ambil nama Latin surah dari surahList
+                        String namaSurah = surahList
+                            .firstWhere(
+                                (surah) => surah.nomor == ayah.nomorSurah)
+                            .namaLatin;
 
-                      // Cek apakah ayat ini adalah ayat terakhir dalam surah
-                      bool isFirstAyah = surahList
-                              .firstWhere(
-                                  (surah) => surah.nomor == ayah.nomorSurah)
-                              .ayat
-                              .first
-                              .nomorAyat ==
-                          ayah.nomorAyat;
+                        // Cek apakah ayat ini adalah ayat terakhir dalam surah
+                        bool isFirstAyah = surahList
+                                .firstWhere(
+                                    (surah) => surah.nomor == ayah.nomorSurah)
+                                .ayat
+                                .first
+                                .nomorAyat ==
+                            ayah.nomorAyat;
 
-                      return [
-                        if (isFirstAyah) ...[
-                          // Nama Surah di Tengah
-                          WidgetSpan(
-                            child: Center(
+                        return [
+                          if (isFirstAyah) ...[
+                            // Nama Surah di Tengah
+                            WidgetSpan(
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(bottom: 12),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(Icons.star,
+                                          color: Colors.teal, size: 18),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8),
+                                        child: Text(
+                                          "【 $namaSurah 】",
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.teal,
+                                            fontStyle: FontStyle.italic,
+                                          ),
+                                        ),
+                                      ),
+                                      const Icon(Icons.star,
+                                          color: Colors.teal, size: 18),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            // Garis Pemisah Dekoratif
+                            const WidgetSpan(
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 8, bottom: 12),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Icon(Icons.star,
-                                        color: Colors.teal, size: 18),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8),
+                                padding: EdgeInsets.symmetric(vertical: 5),
+                                child: Divider(
+                                  thickness: 2,
+                                  color: Colors.teal,
+                                  indent: 50,
+                                  endIndent: 50,
+                                ),
+                              ),
+                            ),
+                            // Tambahkan jarak setelah nama surah
+                            const WidgetSpan(
+                              child: SizedBox(height: 12),
+                            ),
+                          ],
+
+                          // Ayat dalam satu baris dengan nomor ayat dalam lingkaran
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: " ${ayah.teksArab} ",
+                                style: GoogleFonts.lateef(
+                                  fontSize: 38,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              const WidgetSpan(
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 22),
+                                ),
+                              ),
+                              WidgetSpan(
+                                alignment: PlaceholderAlignment.middle,
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 5),
+                                  child: Container(
+                                    width: 28,
+                                    height: 28,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                          color: Colors.teal,
+                                          width: 2), // Border lingkaran
+                                      color:
+                                          Colors.white, // Warna latar belakang
+                                    ),
+                                    child: Center(
                                       child: Text(
-                                        "【 $namaSurah 】",
+                                        "${ayah.nomorAyat}",
                                         style: const TextStyle(
-                                          fontSize: 18,
+                                          fontSize: 12,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.teal,
-                                          fontStyle: FontStyle.italic,
                                         ),
                                       ),
                                     ),
-                                    const Icon(Icons.star,
-                                        color: Colors.teal, size: 18),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          // Garis Pemisah Dekoratif
-                          const WidgetSpan(
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10),
-                              child: Divider(
-                                thickness: 2,
-                                color: Colors.teal,
-                                indent: 50,
-                                endIndent: 50,
-                              ),
-                            ),
-                          ),
-                          // Tambahkan jarak setelah nama surah
-                          const WidgetSpan(
-                            child: SizedBox(height: 12),
-                          ),
-                        ],
-
-                        // Ayat dalam satu baris dengan nomor ayat dalam lingkaran
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: "${ayah.teksArab} ",
-                              style: GoogleFonts.amiri(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black,
-                              ),
-                            ),
-                            WidgetSpan(
-                              alignment: PlaceholderAlignment.middle,
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 5),
-                                child: Container(
-                                  width: 32,
-                                  height: 32,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                        color: Colors.teal,
-                                        width: 2), // Border lingkaran
-                                    color: Colors.white, // Warna latar belakang
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "${ayah.nomorAyat}",
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.teal,
-                                      ),
-                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        // Tambahkan jarak antar ayat dengan SizedBox
-                      ];
-                    }).toList(),
+                            ],
+                          ),
+                          // Tambahkan jarak antar ayat dengan SizedBox
+                        ];
+                      }).toList(),
+                    ),
                   ),
                 ),
               ),

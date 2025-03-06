@@ -7,7 +7,9 @@ import 'package:quranku_offline/core/providers/quran_provider.dart';
 class SurahPage extends ConsumerStatefulWidget {
   final Surah surah;
 
-  const SurahPage({super.key, required this.surah});
+  final int? targetAyah;
+
+  const SurahPage({super.key, required this.surah, this.targetAyah});
 
   @override
   _SurahPageState createState() => _SurahPageState();
@@ -21,14 +23,34 @@ class _SurahPageState extends ConsumerState<SurahPage> {
     super.initState();
     _scrollController = ref.read(scrollControllerProvider);
     // ✅ Perbarui visibilitas FAB saat halaman dimuat pertama kali
-    Future.microtask(() {
-      if (mounted) {
-        ref
-            .read(fabVisibilityProvider.notifier)
-            .updateVisibility(_scrollController);
+    Future.microtask(
+      () {
+        if (mounted) {
+          ref
+              .read(fabVisibilityProvider.notifier)
+              .updateVisibility(_scrollController);
+        }
+      },
+    );
+
+    void _scrollToAyah(int nomorAyat) {
+      final index =
+          widget.surah.ayat.indexWhere((ayah) => ayah.nomorAyat == nomorAyat);
+      if (index != -1) {
+        _scrollController.animateTo(
+          index * 100.0, // 🔹 Scroll ke posisi (100 pixel per ayat)
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+      }
+    }
+
+    // 🔹 Tunggu hingga halaman selesai build sebelum scroll ke ayat
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.targetAyah != null) {
+        _scrollToAyah(widget.targetAyah!);
       }
     });
-
     // ✅ Tambahkan listener untuk mendeteksi perubahan scroll
     _scrollController.addListener(_onScroll);
   }
@@ -109,7 +131,7 @@ class _SurahPageState extends ConsumerState<SurahPage> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       IconButton(
-                        iconSize: 30,
+                        iconSize: 25,
                         icon: Icon(
                           isBookmarked ? Icons.bookmark : Icons.bookmark_border,
                           color: isBookmarked ? Colors.teal : Colors.grey,
@@ -130,8 +152,8 @@ class _SurahPageState extends ConsumerState<SurahPage> {
                         child: Text(
                           ayah.teksArab,
                           textAlign: TextAlign.right,
-                          style: GoogleFonts.amiri(
-                            fontSize: 24,
+                          style: GoogleFonts.lateef(
+                            fontSize: 36,
                             fontWeight: FontWeight.w500,
                             color: Colors.black,
                           ),
@@ -139,8 +161,8 @@ class _SurahPageState extends ConsumerState<SurahPage> {
                       ),
                       const SizedBox(width: 10),
                       Container(
-                        width: 32,
-                        height: 32,
+                        width: 24,
+                        height: 24,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(color: Colors.teal, width: 2),
@@ -150,10 +172,10 @@ class _SurahPageState extends ConsumerState<SurahPage> {
                           child: Text(
                             "${ayah.nomorAyat}",
                             style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.teal,
-                            ),
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.teal,
+                                height: 2.0),
                           ),
                         ),
                       ),

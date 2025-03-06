@@ -11,7 +11,7 @@ class PerSurahPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final surahList = ref.watch(quranProvider);
-    final scrollController = ref.watch(scrollControllerProvider);
+    // final scrollController = ref.watch(scrollControllerProvider);
 
     return Scaffold(
       appBar: AppBar(

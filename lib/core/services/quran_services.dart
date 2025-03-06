@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:logger/logger.dart';
 import 'package:quranku_offline/core/models/ayah_model.dart';
 import '../models/surah_model.dart';
 
@@ -16,7 +17,7 @@ class QuranService {
         // Tambahkan surah ke daftar
         allSurahList.add(Surah.fromJson(jsonData));
       } catch (e) {
-        print("Gagal membaca $filePath: $e");
+        Logger().e("Gagal membaca $filePath: $e");
       }
     }
 
@@ -38,7 +39,7 @@ class QuranService {
 
         allAyahList.addAll(ayatList);
       } catch (e) {
-        print("Gagal membaca $filePath: $e");
+        Logger().e("Gagal membaca $filePath: $e");
       }
     }
 

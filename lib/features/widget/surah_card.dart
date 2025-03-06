@@ -36,8 +36,8 @@ class SurahCard extends StatelessWidget {
           leading: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: SizedBox(
-              width: 35,
-              height: 35,
+              width: 24,
+              height: 24,
               child: CircleAvatar(
                 backgroundColor: Colors.teal,
                 child: Text(
@@ -53,16 +53,16 @@ class SurahCard extends StatelessWidget {
           ),
           title: Text(
             surah.nama,
-            style: GoogleFonts.amiri(
-              fontSize: 24,
+            style: GoogleFonts.lateef(
+              fontSize: 32,
               fontWeight: FontWeight.bold,
               color: Colors.green[800],
             ),
           ),
           subtitle: Text(
             "${surah.namaLatin}: ${surah.jumlahAyat} ayat",
-            style: GoogleFonts.lateef(
-              fontSize: 16,
+            style: GoogleFonts.abel(
+              fontSize: 14,
               color: Colors.grey[800],
             ),
           ),

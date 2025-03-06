@@ -12,6 +12,7 @@ dependencies:
   flutter_launcher_icons: ^0.14.3
   flutter_riverpod: ^2.6.1
   google_fonts: ^6.2.1
+  logger: ^2.5.0
   path_provider: ^2.1.5
   shared_preferences: ^2.5.2
   shimmer: ^3.0.0

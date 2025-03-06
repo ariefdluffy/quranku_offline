@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
 import 'package:quranku_offline/core/models/ayah_model.dart';
 import 'package:quranku_offline/core/services/quran_services.dart';
 import '../models/surah_model.dart';
@@ -17,7 +18,7 @@ class QuranNotifier extends StateNotifier<List<Surah>> {
       final service = QuranService();
       state = await service.fetchAllSurah();
     } catch (e) {
-      print("Error loading Quran data: $e");
+      Logger().e("Error loading Quran data: $e");
     }
   }
 }
@@ -62,7 +63,7 @@ class AllAyahNotifier extends StateNotifier<List<Ayah>> {
       final service = QuranService();
       state = await service.fetchAllAyah();
     } catch (e) {
-      print("Error loading all ayah data: $e");
+      Logger().e("Error loading all ayah data: $e");
     }
   }
 }
