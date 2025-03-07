@@ -36,8 +36,8 @@ class SurahCard extends StatelessWidget {
           leading: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: SizedBox(
-              width: 24,
-              height: 24,
+              width: 28,
+              height: 28,
               child: CircleAvatar(
                 backgroundColor: Colors.teal,
                 child: Text(

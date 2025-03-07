@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
@@ -119,7 +120,7 @@ final bookmarkProvider = StateNotifierProvider<BookmarkNotifier, List<Ayah>>(
 );
 
 // Provider untuk mengontrol state loading
-final isLoadingProvider = StateProvider<bool>((ref) => true);
+final isLoadingProvider = StateProvider<bool>((ref) => false);
 
 class ScrollControllerNotifier extends StateNotifier<ScrollController> {
   ScrollControllerNotifier() : super(ScrollController());
@@ -159,12 +160,6 @@ class FabVisibilityNotifier extends StateNotifier<bool> {
   }
 }
 
-// // ✅ Gunakan `.autoDispose` agar FAB hanya bekerja untuk halaman yang sedang terbuka
-// final fabIconProvider =
-//     StateNotifierProvider.autoDispose<FabIconNotifier, bool>(
-//   (ref) => FabIconNotifier(),
-// );
-
 final fabVisibilityProvider =
     StateNotifierProvider<FabVisibilityNotifier, bool>(
   (ref) => FabVisibilityNotifier(),
@@ -188,3 +183,68 @@ class FabIconNotifier extends StateNotifier<bool> {
 final fabIconProvider = StateNotifierProvider<FabIconNotifier, bool>(
   (ref) => FabIconNotifier(),
 );
+
+class AudioPlayerNotifier extends StateNotifier<AudioPlayer> {
+  AudioPlayerNotifier(Ref ref) : super(AudioPlayer()) {
+    _initListener();
+
+    // 🔹 Hentikan audio saat provider dihentikan
+    ref.onDispose(() {
+      state.stop();
+    });
+  }
+
+  void _initListener() {
+    state.onPlayerComplete.listen((event) {
+      state.stop(); // Hentikan audio setelah selesai
+    });
+  }
+
+  Future<void> playAudio(String url, WidgetRef ref) async {
+    ref.read(isLoadingAudioProvider.notifier).state =
+        true; // ✅ Aktifkan loading
+
+    try {
+      await state.stop();
+      await state.play(UrlSource(url));
+      ref.read(isPlayingProvider.notifier).state = true;
+    } catch (e) {
+      Logger().e("Error saat memutar audio: $e");
+    } finally {
+      ref.read(isLoadingAudioProvider.notifier).state =
+          false; // ✅ Matikan loading setelah selesai
+    }
+  }
+
+  Future<void> pauseAudio(WidgetRef ref) async {
+    await state.pause();
+    ref.read(isPlayingProvider.notifier).state = false;
+  }
+
+  Future<void> stopAudio(WidgetRef ref) async {
+    await state.stop();
+    ref.read(isPlayingProvider.notifier).state = false;
+  }
+}
+
+final isLoadingAudioProvider = StateProvider<bool>((ref) => false);
+
+final isPlayingProvider = StateProvider<bool>((ref) => false);
+
+final audioPlayerProvider =
+    StateNotifierProvider<AudioPlayerNotifier, AudioPlayer>(
+  (ref) => AudioPlayerNotifier(ref),
+);
+
+final selectedSurahProvider =
+    FutureProvider.family<Surah, int>((ref, nomorSurah) async {
+  final surahList = ref.watch(quranProvider);
+  await Future.delayed(const Duration(milliseconds: 800)); // 🔹 Simulasi load
+  return surahList.firstWhere((surah) => surah.nomor == nomorSurah);
+});
+
+final futureSurahProvider =
+    FutureProvider.family<List<Ayah>, Surah>((ref, surah) async {
+  await Future.delayed(const Duration(seconds: 2)); // ✅ Simulasi delay loading
+  return surah.ayat; // ✅ Kembalikan daftar ayat
+});

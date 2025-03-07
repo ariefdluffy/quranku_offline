@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.quranku_offline"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 35
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

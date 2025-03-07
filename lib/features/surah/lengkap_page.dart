@@ -17,7 +17,10 @@ class LengkapPage extends ConsumerWidget {
 
     if (surahList.isEmpty) {
       return const Scaffold(
-        body: Center(child: ShimmerLoading()),
+        body: Center(
+            child: ShimmerLoading(
+          itemCount: 8,
+        )),
       );
     }
 
@@ -82,11 +85,21 @@ class LengkapPage extends ConsumerWidget {
 
                         return [
                           if (isFirstAyah) ...[
+                            // Garis Pemisah Dekoratif
+                            const WidgetSpan(
+                              child: Divider(
+                                thickness: 1,
+                                color: Colors.teal,
+                                indent: 50,
+                                endIndent: 50,
+                              ),
+                            ),
                             // Nama Surah di Tengah
                             WidgetSpan(
                               child: Center(
                                 child: Padding(
-                                  padding: const EdgeInsets.only(bottom: 12),
+                                  padding:
+                                      const EdgeInsets.only(bottom: 2, top: 10),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -98,7 +111,7 @@ class LengkapPage extends ConsumerWidget {
                                         child: Text(
                                           "【 $namaSurah 】",
                                           style: const TextStyle(
-                                            fontSize: 14,
+                                            fontSize: 18,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.teal,
                                             fontStyle: FontStyle.italic,
@@ -112,31 +125,15 @@ class LengkapPage extends ConsumerWidget {
                                 ),
                               ),
                             ),
-                            // Garis Pemisah Dekoratif
-                            const WidgetSpan(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(vertical: 5),
-                                child: Divider(
-                                  thickness: 2,
-                                  color: Colors.teal,
-                                  indent: 50,
-                                  endIndent: 50,
-                                ),
-                              ),
-                            ),
-                            // Tambahkan jarak setelah nama surah
-                            const WidgetSpan(
-                              child: SizedBox(height: 12),
-                            ),
                           ],
 
                           // Ayat dalam satu baris dengan nomor ayat dalam lingkaran
                           TextSpan(
                             children: [
                               TextSpan(
-                                text: " ${ayah.teksArab} ",
+                                text: " ${ayah.teksArab}",
                                 style: GoogleFonts.lateef(
-                                  fontSize: 38,
+                                  fontSize: 40,
                                   fontWeight: FontWeight.w500,
                                   color: Colors.black,
                                 ),
@@ -174,6 +171,9 @@ class LengkapPage extends ConsumerWidget {
                                     ),
                                   ),
                                 ),
+                              ),
+                              const WidgetSpan(
+                                child: SizedBox(height: 15),
                               ),
                             ],
                           ),
