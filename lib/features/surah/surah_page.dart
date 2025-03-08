@@ -4,8 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:quranku_offline/core/models/ayah_model.dart';
 import 'package:quranku_offline/core/models/surah_model.dart';
 import 'package:quranku_offline/core/providers/quran_provider.dart';
+import 'package:quranku_offline/features/widget/audio_player_widget.dart';
 import 'package:quranku_offline/features/widget/ayah_detail_sheet.dart';
 import 'package:quranku_offline/features/widget/shimmer_loading.dart';
+import 'package:quranku_offline/features/widget/surah_detail_dialog.dart';
 
 class SurahPage extends ConsumerStatefulWidget {
   final Surah surah;
@@ -117,8 +119,8 @@ class _SurahPageState extends ConsumerState<SurahPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.info_outline, color: Colors.white),
-            onPressed: () => _showSurahDetailDialog(
-                context, ref, widget.surah), // 🔹 Tampilkan dialog detail
+            onPressed: () => showSurahDetail(
+                context, widget.surah), // 🔹 Tampilkan dialog detail
           ),
         ],
       ),
@@ -242,34 +244,39 @@ class _SurahPageState extends ConsumerState<SurahPage> {
             }).toList(),
           ),
         ),
+        // 🔹 Tambahkan Container Audio di Bawah
+      ),
+      // 🔹 Gunakan Widget AudioPlayer di Bawah
+      bottomNavigationBar: AudioPlayerWidget(
+        audioUrl: widget.surah.audioFull['04'], // Pilih Qari tertentu
       ),
 
       // 🔹 Floating Action Button (FAB) hanya muncul jika bisa di-scroll
-      floatingActionButton: isFabVisible
-          ? FloatingActionButton(
-              onPressed: () {
-                if (scrollController.hasClients) {
-                  final isAtBottom = scrollController.position.pixels >=
-                      scrollController.position.maxScrollExtent - 50;
-                  if (isAtBottom) {
-                    ref.read(scrollControllerProvider.notifier).scrollToTop();
-                  } else {
-                    ref
-                        .read(scrollControllerProvider.notifier)
-                        .scrollToBottom();
-                  }
-                }
-              },
-              backgroundColor: Colors.teal,
-              child: Icon(
-                scrollController.hasClients &&
-                        scrollController.position.pixels >=
-                            scrollController.position.maxScrollExtent - 50
-                    ? Icons.arrow_upward
-                    : Icons.arrow_downward,
-              ),
-            )
-          : null, // ✅ FAB disembunyikan jika konten hanya 1 layar
+      // floatingActionButton: isFabVisible
+      //     ? FloatingActionButton(
+      //         onPressed: () {
+      //           if (scrollController.hasClients) {
+      //             final isAtBottom = scrollController.position.pixels >=
+      //                 scrollController.position.maxScrollExtent - 50;
+      //             if (isAtBottom) {
+      //               ref.read(scrollControllerProvider.notifier).scrollToTop();
+      //             } else {
+      //               ref
+      //                   .read(scrollControllerProvider.notifier)
+      //                   .scrollToBottom();
+      //             }
+      //           }
+      //         },
+      //         backgroundColor: Colors.teal,
+      //         child: Icon(
+      //           scrollController.hasClients &&
+      //                   scrollController.position.pixels >=
+      //                       scrollController.position.maxScrollExtent - 50
+      //               ? Icons.arrow_upward
+      //               : Icons.arrow_downward,
+      //         ),
+      //       )
+      //     : null, // ✅ FAB disembunyikan jika konten hanya 1 layar
     );
   }
 }
@@ -287,252 +294,10 @@ void showAyahDetail(BuildContext context, Ayah ayah) {
   );
 }
 
-// // 🔹 Fungsi untuk Menampilkan Detail Ayat dengan Tombol Play Audio
-// void _showAyahDetailDialog(BuildContext context, Ayah ayah) {
-//   showModalBottomSheet(
-//     context: context,
-//     isScrollControlled: true,
-//     shape: const RoundedRectangleBorder(
-//       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-//     ),
-//     backgroundColor: Colors.white,
-//     builder: (context) {
-//       return Consumer(
-//         builder: (context, ref, child) {
-//           final audioPlayer = ref.watch(audioPlayerProvider.notifier);
-//           final isPlaying = ref.watch(isPlayingProvider);
-
-//           // 🔹 Tambahkan listener agar ikon berubah saat audio selesai
-//           ref.read(audioPlayerProvider).onPlayerComplete.listen((event) {
-//             ref.read(isPlayingProvider.notifier).state = false;
-//           });
-
-//           return Padding(
-//             padding: const EdgeInsets.all(12.0),
-//             child: Column(
-//               mainAxisSize: MainAxisSize.min,
-//               children: [
-//                 // 🔹 Tombol Tutup di Kanan Atas
-//                 Align(
-//                   alignment: Alignment.topRight,
-//                   child: InkWell(
-//                     onTap: () {
-//                       audioPlayer.stopAudio(ref);
-//                       Navigator.pop(context);
-//                     },
-//                     borderRadius:
-//                         BorderRadius.circular(30), // 🔹 Efek klik melingkar
-//                     child: Container(
-//                       width: 40,
-//                       height: 40,
-//                       decoration: BoxDecoration(
-//                         shape: BoxShape.circle,
-//                         color: Colors.redAccent
-//                             .withOpacity(0.1), // 🔹 Warna transparan
-//                       ),
-//                       child: const Icon(
-//                         Icons.close_rounded,
-//                         color: Colors.redAccent,
-//                         size: 26,
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-
-//                 Text(
-//                   ayah.teksArab,
-//                   textAlign: TextAlign.right,
-//                   style: GoogleFonts.lateef(
-//                     fontSize: 38,
-//                     fontWeight: FontWeight.w600,
-//                     color: Colors.black,
-//                   ),
-//                 ),
-//                 const SizedBox(height: 10),
-//                 Text(
-//                   ayah.teksLatin,
-//                   textAlign: TextAlign.right,
-//                   style: const TextStyle(
-//                       fontSize: 16,
-//                       fontStyle: FontStyle.italic,
-//                       color: Colors.grey),
-//                 ),
-//                 const SizedBox(height: 10),
-//                 Text(
-//                   ayah.teksIndonesia,
-//                   textAlign: TextAlign.left,
-//                   style: const TextStyle(fontSize: 16, color: Colors.black87),
-//                 ),
-//                 const Divider(thickness: 1, color: Colors.teal),
-//                 // 🔹 Tombol Play/Pause Audio
-//                 IconButton(
-//                   icon: Icon(
-//                     isPlaying
-//                         ? Icons.pause_circle_filled
-//                         : Icons.play_circle_fill,
-//                     color: Colors.teal,
-//                     size: 60,
-//                   ),
-//                   onPressed: () {
-//                     if (isPlaying) {
-//                       audioPlayer.pauseAudio(ref);
-//                     } else {
-//                       audioPlayer.playAudio(ayah.audio['04'] ?? '', ref);
-//                     }
-//                   },
-//                 ),
-//                 // ElevatedButton.icon(
-//                 //   onPressed: () {
-//                 //     audioPlayer.stopAudio(ref);
-//                 //     Navigator.pop(context);
-//                 //   },
-//                 //   icon: const Icon(Icons.close),
-//                 //   label: const Text("Tutup"),
-//                 //   style: ElevatedButton.styleFrom(
-//                 //     backgroundColor: Colors.redAccent,
-//                 //     foregroundColor: Colors.white,
-//                 //     shape: RoundedRectangleBorder(
-//                 //       borderRadius: BorderRadius.circular(10),
-//                 //     ),
-//                 //     padding: const EdgeInsets.symmetric(
-//                 //         vertical: 12, horizontal: 20),
-//                 //   ),
-//                 // ),
-//               ],
-//             ),
-//           );
-//         },
-//       );
-//     },
-//   );
-// }
-
-// 🔹 Fungsi untuk Menampilkan Detail Surah dalam Dialog
-void _showSurahDetailDialog(BuildContext context, WidgetRef ref, Surah surah) {
+void showSurahDetail(BuildContext context, Surah surah) {
   showDialog(
     useSafeArea: false,
     context: context,
-    builder: (context) {
-      return Consumer(
-        builder: (context, ref, child) {
-          final audioPlayer = ref.watch(audioPlayerProvider.notifier);
-          final isPlaying = ref.watch(isPlayingProvider);
-
-          final isLoadingAudio =
-              ref.watch(isLoadingAudioProvider); // 🔹 Pantau loading
-
-          // 🔹 Pastikan ada audio untuk surah ini
-          String? audioUrl = surah.audioFull['04']; // Pilih Qari tertentu
-
-          // 🔹 Tambahkan listener agar ikon berubah saat audio selesai
-          ref.read(audioPlayerProvider).onPlayerComplete.listen((event) {
-            ref.read(isPlayingProvider.notifier).state = false;
-          });
-
-          return AlertDialog(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  surah.namaLatin,
-                  style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.teal),
-                ),
-                InkWell(
-                  onTap: () {
-                    audioPlayer.stopAudio(ref);
-                    Navigator.pop(context);
-                  },
-                  borderRadius:
-                      BorderRadius.circular(30), // 🔹 Efek klik melingkar
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.redAccent
-                          .withOpacity(0.1), // 🔹 Warna transparan
-                    ),
-                    child: const Icon(
-                      Icons.close_rounded,
-                      color: Colors.redAccent,
-                      size: 26,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // const Divider(thickness: 1, color: Colors.teal),
-                Text(
-                  surah.nama,
-                  style: GoogleFonts.amiri(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black),
-                ),
-                const SizedBox(height: 5),
-                _buildDetailRow("Jumlah Ayat", "${surah.jumlahAyat} ayat"),
-                _buildDetailRow("Tempat Turun", surah.tempatTurun),
-                _buildDetailRow("Arti", surah.arti),
-                const Divider(thickness: 1, color: Colors.teal),
-                Text(
-                  surah.deskripsi.replaceAll(
-                      RegExp(r'<[^>]*>'), ''), // 🔹 Hilangkan tag HTML
-                  textAlign: TextAlign.justify,
-                  style: const TextStyle(fontSize: 14, color: Colors.black87),
-                ),
-                const SizedBox(height: 15),
-
-                // 🔹 Tombol Play/Pause dengan Loading
-                if (audioUrl != null)
-                  isLoadingAudio
-                      ? const CircularProgressIndicator(
-                          color:
-                              Colors.teal) // ✅ Tampilkan loading saat download
-                      : IconButton(
-                          icon: Icon(
-                            isPlaying
-                                ? Icons.pause_circle_filled
-                                : Icons.play_circle_fill,
-                            color: Colors.teal,
-                            size: 55,
-                          ),
-                          onPressed: () {
-                            if (isPlaying) {
-                              audioPlayer.pauseAudio(ref);
-                            } else {
-                              audioPlayer.playAudio(audioUrl, ref);
-                            }
-                          },
-                        ),
-              ],
-            ),
-          );
-        },
-      );
-    },
-  );
-}
-
-// 🔹 Widget untuk Baris Detail
-Widget _buildDetailRow(String title, String value) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 4.0),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(title,
-            style: const TextStyle(
-                fontWeight: FontWeight.bold, color: Colors.black)),
-        Text(value, style: const TextStyle(color: Colors.black54)),
-      ],
-    ),
+    builder: (context) => SurahDetailDialog(surah: surah),
   );
 }

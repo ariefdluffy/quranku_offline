@@ -118,7 +118,7 @@ class AyahDetailSheet extends ConsumerWidget {
 
             Text(
               ayah.teksIndonesia,
-              textAlign: TextAlign.left,
+              textAlign: TextAlign.justify,
               style: const TextStyle(fontSize: 16, color: Colors.black87),
             ),
             const Divider(thickness: 1, color: Colors.teal),
@@ -128,7 +128,7 @@ class AyahDetailSheet extends ConsumerWidget {
               icon: Icon(
                 isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill,
                 color: Colors.teal,
-                size: 60,
+                size: 55,
               ),
               onPressed: () {
                 if (isPlaying) {

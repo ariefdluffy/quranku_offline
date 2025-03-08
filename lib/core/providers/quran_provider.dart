@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -200,15 +201,23 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayer> {
     });
   }
 
+  final audioErrorProvider = StateProvider<String?>((ref) => null);
+
   Future<void> playAudio(String url, WidgetRef ref) async {
     ref.read(isLoadingAudioProvider.notifier).state =
         true; // ✅ Aktifkan loading
+    ref.read(audioErrorProvider.notifier).state = null; // ✅ Reset pesan error
 
     try {
-      await state.stop();
-      await state.play(UrlSource(url));
+      // await state.stop();
+      await state.play(UrlSource(url)).timeout(const Duration(seconds: 20));
       ref.read(isPlayingProvider.notifier).state = true;
+    } on TimeoutException {
+      ref.read(audioErrorProvider.notifier).state =
+          "Koneksi timeout. Coba lagi.";
     } catch (e) {
+      ref.read(audioErrorProvider.notifier).state =
+          "Gagal memutar audio: $e"; // ✅ Simpan pesan error
       Logger().e("Error saat memutar audio: $e");
     } finally {
       ref.read(isLoadingAudioProvider.notifier).state =

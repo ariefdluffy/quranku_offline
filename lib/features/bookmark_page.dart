@@ -39,16 +39,59 @@ class BookmarkPage extends ConsumerWidget {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     child: ListTile(
-                      title: Text(
-                        ayah.teksArab,
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.amiri(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black,
+                      isThreeLine: true,
+                      // leading: Text(
+                      //   "${surah.namaLatin} ",
+                      //   style: GoogleFonts.lateef(
+                      //     fontSize: 14,
+                      //     fontWeight: FontWeight.w500,
+                      //     color: Colors.black,
+                      //   ),
+                      // ),
+                      title: RichText(
+                        textAlign: TextAlign.justify,
+                        textDirection: TextDirection.rtl,
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: "${ayah.teksArab} ",
+                              style: GoogleFonts.lateef(
+                                fontSize: 34,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                            ),
+                            const WidgetSpan(
+                                child: SizedBox(
+                              width: 10,
+                            )),
+                            WidgetSpan(
+                              child: Container(
+                                width: 26,
+                                height: 26,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border:
+                                      Border.all(color: Colors.teal, width: 2),
+                                  color: Colors.white,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "${ayah.nomorAyat}",
+                                    style: const TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.teal,
+                                        height: 2.0),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      subtitle: Text(ayah.teksIndonesia),
+                      subtitle: Text(
+                          "${surah.namaLatin}:${surah.nomor}, ${ayah.teksIndonesia}"),
                       trailing: IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () {

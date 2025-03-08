@@ -11,7 +11,9 @@ class PerSurahPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final surahList = ref.watch(quranProvider);
-    final scrollController = ref.watch(scrollControllerProvider);
+    // final scrollController = ref.watch(scrollControllerProvider);
+    // final isFabVisible =
+    //     ref.watch(fabVisibilityProvider); // ✅ Cek apakah FAB perlu ditampilkan
 
     return Scaffold(
       appBar: AppBar(
@@ -44,27 +46,32 @@ class PerSurahPage extends ConsumerWidget {
                 },
               ),
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          if (scrollController.hasClients) {
-            final isAtBottom = scrollController.position.pixels >=
-                scrollController.position.maxScrollExtent - 50;
-            if (isAtBottom) {
-              ref.read(scrollControllerProvider.notifier).scrollToTop();
-            } else {
-              ref.read(scrollControllerProvider.notifier).scrollToBottom();
-            }
-          }
-        },
-        backgroundColor: Colors.teal,
-        child: Icon(
-          scrollController.hasClients &&
-                  scrollController.position.pixels >=
-                      scrollController.position.maxScrollExtent - 50
-              ? Icons.arrow_upward
-              : Icons.arrow_downward,
-        ),
-      ),
+
+      // floatingActionButton: isFabVisible
+      //     ? FloatingActionButton(
+      //         onPressed: () {
+      //           if (scrollController.hasClients) {
+      //             final isAtBottom = scrollController.position.pixels >=
+      //                 scrollController.position.maxScrollExtent - 50;
+      //             if (isAtBottom) {
+      //               ref.read(scrollControllerProvider.notifier).scrollToTop();
+      //             } else {
+      //               ref
+      //                   .read(scrollControllerProvider.notifier)
+      //                   .scrollToBottom();
+      //             }
+      //           }
+      //         },
+      //         backgroundColor: Colors.teal,
+      //         child: Icon(
+      //           scrollController.hasClients &&
+      //                   scrollController.position.pixels >=
+      //                       scrollController.position.maxScrollExtent - 50
+      //               ? Icons.arrow_upward
+      //               : Icons.arrow_downward,
+      //         ),
+      //       )
+      //     : null,
     );
   }
 }
