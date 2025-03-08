@@ -29,7 +29,7 @@ class AboutPage extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                "© Miftahul Arif | V.1.0.2",
+                "© Miftahul Arif | V.1.1.0",
                 style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
               ),
               // const SizedBox(height: 8),

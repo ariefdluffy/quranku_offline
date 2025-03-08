@@ -33,42 +33,39 @@ class AudioPlayerWidget extends ConsumerWidget {
             isLoading
                 ? const CircularProgressIndicator(
                     color: Colors.teal) // ⏳ Loading saat audio di-download
-                : Row(
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          isPlaying
-                              ? Icons.pause_circle_filled
-                              : Icons.play_circle_fill,
-                          color: Colors.teal,
-                          size: 50,
-                        ),
-                        onPressed: () {
-                          if (isPlaying) {
-                            audioPlayer.pauseAudio(ref);
-                            ref.read(isPlayingProvider.notifier).state = false;
-                          } else {
-                            audioPlayer.playAudio(audioUrl!, ref);
-                            ref.read(isPlayingProvider.notifier).state = true;
-                          }
-                        },
-                      ),
-                      const SizedBox(width: 10), // 🔹 Beri sedikit jarak
-
-                      // 🔹 Tombol Stop Audio
-                      IconButton(
-                        icon: const Icon(
-                          Icons.stop_circle_outlined,
-                          color: Colors.redAccent,
-                          size: 50,
-                        ),
-                        onPressed: () {
-                          audioPlayer.stopAudio(ref);
-                          ref.read(isPlayingProvider.notifier).state = false;
-                        },
-                      ),
-                    ],
+                : IconButton(
+                    icon: Icon(
+                      isPlaying
+                          ? Icons.pause_circle_filled
+                          : Icons.play_circle_fill,
+                      color: Colors.teal,
+                      size: 50,
+                    ),
+                    onPressed: () {
+                      if (isPlaying) {
+                        audioPlayer.pauseAudio(ref);
+                        ref.read(isPlayingProvider.notifier).state = false;
+                      } else {
+                        audioPlayer.playAudio(audioUrl!, ref);
+                        ref.read(isPlayingProvider.notifier).state = true;
+                      }
+                    },
                   ),
+            const SizedBox(width: 10), // 🔹 Beri sedikit jarak
+
+            // 🔹 Tombol Stop Audio
+
+            IconButton(
+              icon: const Icon(
+                Icons.stop_circle_outlined,
+                color: Colors.redAccent,
+                size: 50,
+              ),
+              onPressed: () {
+                audioPlayer.stopAudio(ref);
+                ref.read(isPlayingProvider.notifier).state = false;
+              },
+            ),
           ]
         ],
       ),
