@@ -204,8 +204,7 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayer> {
   final audioErrorProvider = StateProvider<String?>((ref) => null);
 
   Future<void> playAudio(String url, WidgetRef ref) async {
-    ref.read(isLoadingAudioProvider.notifier).state =
-        true; // ✅ Aktifkan loading
+    ref.read(isLoadingProvider.notifier).state = true; // ✅ Aktifkan loading
     ref.read(audioErrorProvider.notifier).state = null; // ✅ Reset pesan error
 
     try {
@@ -220,7 +219,7 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayer> {
           "Gagal memutar audio: $e"; // ✅ Simpan pesan error
       Logger().e("Error saat memutar audio: $e");
     } finally {
-      ref.read(isLoadingAudioProvider.notifier).state =
+      ref.read(isLoadingProvider.notifier).state =
           false; // ✅ Matikan loading setelah selesai
     }
   }
@@ -236,7 +235,7 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayer> {
   }
 }
 
-final isLoadingAudioProvider = StateProvider<bool>((ref) => false);
+// final isLoadingProvider = StateProvider<bool>((ref) => false);
 
 final isPlayingProvider = StateProvider<bool>((ref) => false);
 

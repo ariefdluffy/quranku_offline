@@ -11,7 +11,7 @@ class AudioPlayerWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final audioPlayer = ref.watch(audioPlayerProvider.notifier);
     final isPlaying = ref.watch(isPlayingProvider);
-    final isLoadingAudio = ref.watch(isLoadingAudioProvider);
+    final isLoading = ref.watch(isLoadingProvider);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -30,7 +30,7 @@ class AudioPlayerWidget extends ConsumerWidget {
                 style: TextStyle(color: Colors.grey)),
           if (audioUrl != null) ...[
             // 🔹 Tombol Play/Pause Audio
-            isLoadingAudio
+            isLoading
                 ? const CircularProgressIndicator(
                     color: Colors.teal) // ⏳ Loading saat audio di-download
                 : Row(

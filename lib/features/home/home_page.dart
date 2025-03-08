@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quranku_offline/core/providers/navigation_provider.dart';
-import 'package:quranku_offline/features/about_page.dart';
+
+import 'package:quranku_offline/features/audio_full_page.dart';
 import 'package:quranku_offline/features/surah/lengkap_page.dart';
 import 'package:quranku_offline/features/surah/per_surah_page.dart';
 
@@ -16,7 +17,7 @@ class HomePage extends ConsumerWidget {
     final List<Widget> pages = [
       const PerSurahPage(),
       const LengkapPage(),
-      const AboutPage(),
+      const AudioFullPage(),
     ];
 
     return Scaffold(
@@ -40,7 +41,8 @@ class HomePage extends ConsumerWidget {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
         onTap: (index) {
-          ref.read(navigationProvider.notifier).changePage(index);
+          // ref.read(navigationProvider.notifier).changePage(index);
+          ref.read(navigationProvider.notifier).state = index;
         },
         items: const [
           BottomNavigationBarItem(
@@ -52,8 +54,8 @@ class HomePage extends ConsumerWidget {
             label: "Al-Qur'an",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.info),
-            label: "About",
+            icon: Icon(Icons.spatial_audio_off),
+            label: "Audio",
           ),
         ],
         selectedItemColor: Colors.teal,

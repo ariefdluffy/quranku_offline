@@ -26,7 +26,11 @@ class _SurahPageState extends ConsumerState<SurahPage> {
   @override
   void initState() {
     super.initState();
-    _loadAyat();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Panggil fungsi yang memodifikasi provider di sini
+      _loadAyat();
+    });
+    // _loadAyat();
     _scrollController = ref.read(scrollControllerProvider);
     // ✅ Perbarui visibilitas FAB saat halaman dimuat pertama kali
     Future.microtask(

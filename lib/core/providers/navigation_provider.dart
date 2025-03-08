@@ -8,6 +8,8 @@ class NavigationNotifier extends StateNotifier<int> {
   }
 }
 
+final selectedTabProvider = StateProvider<int>((ref) => 0);
+
 final navigationProvider =
     StateNotifierProvider<NavigationNotifier, int>((ref) {
   return NavigationNotifier();
