@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quranku_offline/core/providers/audio_full_provider.dart';
 import 'package:quranku_offline/core/providers/navigation_provider.dart';
-import 'package:quranku_offline/features/audio_full_page.dart';
+// import 'package:quranku_offline/features/audio_full_page.dart';
 
 void showSurahDialog(BuildContext context, WidgetRef ref,
     TextEditingController surahController) {

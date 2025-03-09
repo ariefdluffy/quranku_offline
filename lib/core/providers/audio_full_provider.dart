@@ -1,12 +1,12 @@
 import 'package:audioplayers/audioplayers.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+// import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
-import 'package:quranku_offline/core/providers/connectivity_provider.dart';
+// import 'package:quranku_offline/core/providers/connectivity_provider.dart';
 import 'package:quranku_offline/core/providers/quran_provider.dart';
-import 'package:quranku_offline/main.dart';
+// import 'package:quranku_offline/main.dart';
 
 final audioFullPlayerProvider =
     StateNotifierProvider<AudioFullPlayerNotifier, int>(

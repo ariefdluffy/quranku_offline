@@ -2,12 +2,15 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'package:quranku_offline/features/home/home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Connectivity().checkConnectivity();
+  await MobileAds.instance.initialize();
+
   final FlutterLocalNotificationsPlugin notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 

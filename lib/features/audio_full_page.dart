@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:quranku_offline/core/providers/audio_full_provider.dart';
 import 'package:quranku_offline/core/providers/connectivity_provider.dart';
 import 'package:quranku_offline/core/providers/quran_provider.dart';
-import 'package:quranku_offline/features/about_page.dart';
 import 'package:quranku_offline/features/widget/show_surah_dialog.dart';
 
 class AudioFullPage extends ConsumerStatefulWidget {

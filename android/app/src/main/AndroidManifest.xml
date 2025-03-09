@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 <uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+<uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
 
 
     <application
@@ -7,6 +9,11 @@
         android:label="Al-Quran Offline"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-2393357737286916~6869317210"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
