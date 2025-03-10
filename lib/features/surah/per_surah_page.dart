@@ -14,7 +14,7 @@ class PerSurahPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final surahList = ref.watch(quranProvider);
 
-    final bannerAd = ref.watch(bannerAdProvider);
+    final bannerAd = ref.watch(bannerAdProviderNew);
 
     // final scrollController = ref.watch(scrollControllerProvider);
     // final isFabVisible =
@@ -41,8 +41,9 @@ class PerSurahPage extends ConsumerWidget {
             )
           : Column(
               children: [
-                if (bannerAd !=
-                    null) // 🔹 Menampilkan Banner Ads jika berhasil dimuat
+                if (bannerAd != null &&
+                    bannerAd.responseInfo !=
+                        null) // 🔹 Menampilkan Banner Ads jika berhasil dimuat
                   SizedBox(
                     height: bannerAd.size.height.toDouble(),
                     width: bannerAd.size.width.toDouble(),
@@ -65,39 +66,6 @@ class PerSurahPage extends ConsumerWidget {
                 ),
               ],
             ),
-      // 🔹 Tambahkan Banner Ads di BottomNavigationBar
-      // bottomNavigationBar: bannerAd != null
-      //     ? SizedBox(
-      //         height: bannerAd.size.height.toDouble(),
-      //         child: AdWidget(ad: bannerAd),
-      //       )
-      //     : null,
-
-      // floatingActionButton: isFabVisible
-      //     ? FloatingActionButton(
-      //         onPressed: () {
-      //           if (scrollController.hasClients) {
-      //             final isAtBottom = scrollController.position.pixels >=
-      //                 scrollController.position.maxScrollExtent - 50;
-      //             if (isAtBottom) {
-      //               ref.read(scrollControllerProvider.notifier).scrollToTop();
-      //             } else {
-      //               ref
-      //                   .read(scrollControllerProvider.notifier)
-      //                   .scrollToBottom();
-      //             }
-      //           }
-      //         },
-      //         backgroundColor: Colors.teal,
-      //         child: Icon(
-      //           scrollController.hasClients &&
-      //                   scrollController.position.pixels >=
-      //                       scrollController.position.maxScrollExtent - 50
-      //               ? Icons.arrow_upward
-      //               : Icons.arrow_downward,
-      //         ),
-      //       )
-      //     : null,
     );
   }
 }

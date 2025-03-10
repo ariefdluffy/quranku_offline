@@ -251,8 +251,10 @@ class _SurahPageState extends ConsumerState<SurahPage> {
         // 🔹 Tambahkan Container Audio di Bawah
       ),
       // 🔹 Gunakan Widget AudioPlayer di Bawah
-      bottomNavigationBar: AudioPlayerWidget(
-        audioUrl: widget.surah.audioFull['04'], // Pilih Qari tertentu
+      bottomNavigationBar: SafeArea(
+        child: AudioPlayerWidget(
+          audioUrl: widget.surah.audioFull['04'], // Pilih Qari tertentu
+        ),
       ),
 
       // 🔹 Floating Action Button (FAB) hanya muncul jika bisa di-scroll

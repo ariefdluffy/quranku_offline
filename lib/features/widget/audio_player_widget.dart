@@ -14,7 +14,7 @@ class AudioPlayerWidget extends ConsumerWidget {
     final isLoading = ref.watch(isLoadingProvider);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
       decoration: const BoxDecoration(
         color: Colors.white,
         boxShadow: [

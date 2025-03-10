@@ -124,19 +124,24 @@ class AyahDetailSheet extends ConsumerWidget {
             const Divider(thickness: 1, color: Colors.teal),
 
             // 🔹 Tombol Play/Pause Audio
-            IconButton(
-              icon: Icon(
-                isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill,
-                color: Colors.teal,
-                size: 55,
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10.0),
+              child: IconButton(
+                icon: Icon(
+                  isPlaying
+                      ? Icons.pause_circle_filled
+                      : Icons.play_circle_fill,
+                  color: Colors.teal,
+                  size: 55,
+                ),
+                onPressed: () {
+                  if (isPlaying) {
+                    audioPlayer.pauseAudio(ref);
+                  } else {
+                    audioPlayer.playAudio(ayah.audio['04'] ?? '', ref);
+                  }
+                },
               ),
-              onPressed: () {
-                if (isPlaying) {
-                  audioPlayer.pauseAudio(ref);
-                } else {
-                  audioPlayer.playAudio(ayah.audio['04'] ?? '', ref);
-                }
-              },
             ),
           ],
         ),

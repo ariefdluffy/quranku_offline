@@ -18,11 +18,13 @@ class AudioFullPage extends ConsumerStatefulWidget {
 }
 
 class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
+  BannerAd? _bannerAd;
   final TextEditingController surahController = TextEditingController();
 
   @override
   void dispose() {
     surahController.dispose();
+    _bannerAd?.dispose(); // ✅ Pastikan iklan dihapus saat widget dihancurkan
     super.dispose();
   }
 
@@ -193,14 +195,13 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Container(
-                    child: bannerAd != null
-                        ? SizedBox(
-                            height: bannerAd.size.height.toDouble(),
-                            child: AdWidget(ad: bannerAd),
-                          )
-                        : null,
-                  ),
+                  if (bannerAd != null && bannerAd.responseInfo != null)
+                    Container(
+                      width: bannerAd.size.width.toDouble(),
+                      height: bannerAd.size.height.toDouble(),
+                      alignment: Alignment.center,
+                      child: AdWidget(ad: bannerAd),
+                    ),
                 ],
               ),
             ),
