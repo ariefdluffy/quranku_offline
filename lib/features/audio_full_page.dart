@@ -2,9 +2,12 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:quranku_offline/core/providers/ad_provider.dart';
 import 'package:quranku_offline/core/providers/audio_full_provider.dart';
 import 'package:quranku_offline/core/providers/connectivity_provider.dart';
 import 'package:quranku_offline/core/providers/quran_provider.dart';
+import 'package:quranku_offline/features/about_page.dart';
 import 'package:quranku_offline/features/widget/show_surah_dialog.dart';
 
 class AudioFullPage extends ConsumerStatefulWidget {
@@ -32,6 +35,8 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
 
     final connectivity = ref.watch(connectivityProvider);
 
+    final bannerAd = ref.watch(bannerAdProvider);
+
     // ✅ Dengarkan perubahan koneksi dan tampilkan Snackbar jika internet putus
     ref.listen<AsyncValue<ConnectivityResult>>(
       connectivityProvider,
@@ -57,123 +62,150 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
 
     final currentSurah = surahList[currentSurahIndex];
 
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // 🔹 Tombol Pilih Surah
-          ElevatedButton.icon(
-            icon: const Icon(Icons.search, color: Colors.white),
-            label: const Text("Cari Surah"),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.teal,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-            ),
-            onPressed: () => showSurahDialog(context, ref, surahController),
-          ),
-          const SizedBox(height: 50),
-
-          // 🔹 Nama Surah & Nomor
-          Text(
-            "${currentSurah.namaLatin}: ${currentSurah.nomor}",
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.teal,
-            ),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            currentSurah.nama,
-            style: GoogleFonts.lateef(
-              fontSize: 28,
-              fontWeight: FontWeight.w500,
-              color: Colors.black,
-            ),
-          ),
-          const SizedBox(height: 20),
-
-          // 🔹 Kontrol Audio
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.skip_previous,
-                    size: 35, color: Colors.teal),
-                onPressed: () =>
-                    ref.read(audioFullPlayerProvider.notifier).previousSurah(),
-              ),
-              _buildVerticalDivider(), // 🔹 Pembatas
-
-              // 🔹 Loading atau Play/Pause
-              isLoadingAudio
-                  ? const CircularProgressIndicator(color: Colors.teal)
-                  : IconButton(
-                      icon: Icon(
-                        isPlayingAudio
-                            ? Icons.pause_circle_outlined
-                            : Icons.play_circle_fill,
-                        size: 60,
-                        color: Colors.teal,
-                      ),
-                      onPressed: () {
-                        // if (isPlayingAudio) {
-                        //   ref
-                        //       .read(audioFullPlayerProvider.notifier)
-                        //       .pauseAudio();
-                        // } else {
-                        //   ref
-                        //       .read(audioFullPlayerProvider.notifier)
-                        //       .playSurah(currentSurahIndex);
-                        // }
-                        // 🔹 Cek koneksi sebelum memutar audio
-                        if (connectivity.value == ConnectivityResult.none) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Tidak ada koneksi internet!"),
-                              backgroundColor: Colors.red,
-                              duration: Duration(seconds: 3),
-                            ),
-                          );
-                          return; // 🚫 Jangan lanjutkan pemutaran jika tidak ada internet
-                        }
-
-                        if (isPlayingAudio) {
-                          ref
-                              .read(audioFullPlayerProvider.notifier)
-                              .pauseAudio();
-                        } else {
-                          ref
-                              .read(audioFullPlayerProvider.notifier)
-                              .playSurah(currentSurahIndex);
-                        }
-                      },
-                    ),
-
-              _buildVerticalDivider(), // 🔹 Pembatas
-
-              IconButton(
-                icon: const Icon(Icons.skip_next, size: 35, color: Colors.teal),
-                onPressed: () =>
-                    ref.read(audioFullPlayerProvider.notifier).nextSurah(),
-              ),
-            ],
-          ),
-
-          const Divider(),
-
-          // 🔹 Tombol Stop Audio
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("About"),
+        actions: [
           IconButton(
-            icon: const Icon(Icons.stop_circle_outlined,
-                size: 45, color: Colors.redAccent),
-            onPressed: () =>
-                ref.read(audioFullPlayerProvider.notifier).stopAudio(),
+            icon: const Icon(Icons.account_circle_outlined, color: Colors.teal),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AboutPage()),
+              );
+            },
           ),
         ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(height: 40),
+            // 🔹 Tombol Pilih Surah
+            ElevatedButton.icon(
+              icon: const Icon(Icons.search, color: Colors.white),
+              label: const Text("Cari Surah"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.teal,
+                foregroundColor: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+              ),
+              onPressed: () => showSurahDialog(context, ref, surahController),
+            ),
+            const SizedBox(height: 50),
+
+            // 🔹 Nama Surah & Nomor
+            Text(
+              "${currentSurah.namaLatin}: ${currentSurah.nomor}",
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.teal,
+              ),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              currentSurah.nama,
+              style: GoogleFonts.lateef(
+                fontSize: 28,
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // 🔹 Kontrol Audio
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.skip_previous,
+                      size: 35, color: Colors.teal),
+                  onPressed: () => ref
+                      .read(audioFullPlayerProvider.notifier)
+                      .previousSurah(),
+                ),
+                _buildVerticalDivider(), // 🔹 Pembatas
+
+                // 🔹 Loading atau Play/Pause
+                isLoadingAudio
+                    ? const CircularProgressIndicator(color: Colors.teal)
+                    : IconButton(
+                        icon: Icon(
+                          isPlayingAudio
+                              ? Icons.pause_circle_outlined
+                              : Icons.play_circle_fill,
+                          size: 60,
+                          color: Colors.teal,
+                        ),
+                        onPressed: () {
+                          // 🔹 Cek koneksi sebelum memutar audio
+                          if (connectivity.value == ConnectivityResult.none) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Tidak ada koneksi internet!"),
+                                backgroundColor: Colors.red,
+                                duration: Duration(seconds: 3),
+                              ),
+                            );
+                            return; // 🚫 Jangan lanjutkan pemutaran jika tidak ada internet
+                          }
+
+                          if (isPlayingAudio) {
+                            ref
+                                .read(audioFullPlayerProvider.notifier)
+                                .pauseAudio();
+                          } else {
+                            ref
+                                .read(audioFullPlayerProvider.notifier)
+                                .playSurah(currentSurahIndex);
+                          }
+                        },
+                      ),
+
+                _buildVerticalDivider(), // 🔹 Pembatas
+
+                IconButton(
+                  icon:
+                      const Icon(Icons.skip_next, size: 35, color: Colors.teal),
+                  onPressed: () =>
+                      ref.read(audioFullPlayerProvider.notifier).nextSurah(),
+                ),
+              ],
+            ),
+
+            const Divider(),
+
+            // 🔹 Tombol Stop Audio
+            IconButton(
+              icon: const Icon(Icons.stop_circle_outlined,
+                  size: 45, color: Colors.redAccent),
+              onPressed: () =>
+                  ref.read(audioFullPlayerProvider.notifier).stopAudio(),
+            ),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    child: bannerAd != null
+                        ? SizedBox(
+                            height: bannerAd.size.height.toDouble(),
+                            child: AdWidget(ad: bannerAd),
+                          )
+                        : null,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

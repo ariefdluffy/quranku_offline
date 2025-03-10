@@ -19,7 +19,7 @@ class InterstitialAdNotifier extends StateNotifier<InterstitialAd?> {
   void _loadInterstitialAd() {
     InterstitialAd.load(
       adUnitId:
-          'ca-app-pub-2393357737286916/9178085661', // ✅ Ganti dengan ID asli
+          'ca-app-pub-2393357737286916/6950010590', // ✅ Ganti dengan ID asli
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) => state = ad,
@@ -45,7 +45,7 @@ class BannerAdNotifier extends StateNotifier<BannerAd?> {
     final BannerAd banner = BannerAd(
       size: AdSize.banner,
       adUnitId:
-          'ca-app-pub-2393357737286916~6869317210', // ✅ Ganti dengan ID asli
+          'ca-app-pub-2393357737286916/9178085661', // ✅ Ganti dengan ID asli
       listener: BannerAdListener(
         onAdLoaded: (ad) => state = ad as BannerAd,
         onAdFailedToLoad: (ad, error) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quranku_offline/core/providers/navigation_provider.dart';
+import 'package:quranku_offline/features/about_page.dart';
 
 import 'package:quranku_offline/features/audio_full_page.dart';
 import 'package:quranku_offline/features/surah/lengkap_page.dart';
@@ -18,6 +19,7 @@ class HomePage extends ConsumerWidget {
       const PerSurahPage(),
       const LengkapPage(),
       const AudioFullPage(),
+      // const AboutPage(),
     ];
 
     return Scaffold(
@@ -57,6 +59,10 @@ class HomePage extends ConsumerWidget {
             icon: Icon(Icons.spatial_audio_off),
             label: "Audio",
           ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.more_vert_outlined),
+          //   label: "",
+          // ),
         ],
         selectedItemColor: Colors.teal,
         unselectedItemColor: Colors.grey,

@@ -149,6 +149,8 @@ class AudioFullPlayerNotifier extends StateNotifier<int> {
     final surahList = ref.read(quranProvider);
     if (state + 1 < surahList.length) {
       playSurah(state + 1);
+    } else {
+      ref.read(isPlayingAudioProvider.notifier).state = false;
     }
   }
 

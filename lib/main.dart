@@ -8,8 +8,8 @@ import 'package:quranku_offline/features/home/home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Connectivity().checkConnectivity();
   await MobileAds.instance.initialize();
+  await Connectivity().checkConnectivity();
 
   final FlutterLocalNotificationsPlugin notificationsPlugin =
       FlutterLocalNotificationsPlugin();
