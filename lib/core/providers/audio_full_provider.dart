@@ -1,12 +1,15 @@
+import 'dart:io';
+
 import 'package:audioplayers/audioplayers.dart';
-// import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
-// import 'package:quranku_offline/core/providers/connectivity_provider.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:quranku_offline/core/providers/audio_storage_provider.dart';
 import 'package:quranku_offline/core/providers/quran_provider.dart';
-// import 'package:quranku_offline/main.dart';
+import 'package:http/http.dart' as http;
 
 final audioFullPlayerProvider =
     StateNotifierProvider<AudioFullPlayerNotifier, int>(
@@ -24,15 +27,25 @@ class AudioFullPlayerNotifier extends StateNotifier<int> {
   final FlutterLocalNotificationsPlugin _notifications =
       FlutterLocalNotificationsPlugin();
 
+  BuildContext? _context;
+
   AudioFullPlayerNotifier(this.ref) : super(0) {
     _audioPlayer.onPlayerComplete.listen((event) {
-      nextSurah();
+      if (_context != null) {
+        nextSurah(_context!);
+      }
     });
-    _initNotifications();
+  }
+
+  // ✅ Simpan context dari UI agar bisa digunakan di fungsi lain
+  void setContext(BuildContext context) {
+    _context = context;
+    _initNotifications(
+        context); // ✅ Pastikan _initNotifications() punya context
   }
 
   // ✅ Inisialisasi Notifikasi
-  Future<void> _initNotifications() async {
+  Future<void> _initNotifications(BuildContext context) async {
     const AndroidInitializationSettings androidSettings =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
@@ -44,9 +57,9 @@ class AudioFullPlayerNotifier extends StateNotifier<int> {
       if (response.payload == "pause") {
         pauseAudio();
       } else if (response.payload == "next") {
-        nextSurah();
+        nextSurah(context);
       } else if (response.payload == "previous") {
-        previousSurah();
+        previousSurah(context);
       }
     });
 
@@ -94,7 +107,7 @@ class AudioFullPlayerNotifier extends StateNotifier<int> {
     );
   }
 
-  Future<void> playSurah(int index) async {
+  Future<void> playSurah(BuildContext context, int index) async {
     ref.read(isLoadingAudioProvider.notifier).state =
         true; // ✅ Aktifkan loading
 
@@ -102,22 +115,34 @@ class AudioFullPlayerNotifier extends StateNotifier<int> {
     if (index >= 0 && index < surahList.length) {
       state = index;
       final surah = surahList[index];
-      final audioUrl =
-          surah.audioFull['04']; // Pilih Qari ke-4 (Bisa disesuaikan)
+      final audioUrl = surah.audioFull['04'];
 
       if (audioUrl != null) {
         // await _audioPlayer.stop();
         try {
-          await _audioPlayer.play(UrlSource(audioUrl));
+          final File? file =
+              await _downloadMp3(context, surah.nomor.toString(), audioUrl);
+          if (file != null) {
+            await _audioPlayer.play(DeviceFileSource(file.path));
 
-          ref.read(isLoadingAudioProvider.notifier).state =
-              false; // ✅ Audio sedang diputar
-          ref.read(isPlayingAudioProvider.notifier).state = true;
+            ref.read(isLoadingAudioProvider.notifier).state = false;
+            ref.read(isPlayingAudioProvider.notifier).state = true;
 
-          _showNotification(
-            surah.namaLatin,
-            "Sedang diputar...",
-          );
+            _showNotification(
+              "${surah.namaLatin}: ${surah.nomor}",
+              "Sedang diputar...",
+            );
+          }
+          // await _audioPlayer.play(UrlSource(audioUrl));
+
+          // ref.read(isLoadingAudioProvider.notifier).state =
+          //     false; // ✅ Audio sedang diputar
+          // ref.read(isPlayingAudioProvider.notifier).state = true;
+
+          // _showNotification(
+          //   "${surah.namaLatin}: ${surah.nomor}",
+          //   "Sedang diputar...",
+          // );
         } catch (e) {
           ref.read(audioFullErrorProvider.notifier).state =
               "Gagal memutar audio: $e"; // ✅ Simpan pesan error
@@ -125,6 +150,74 @@ class AudioFullPlayerNotifier extends StateNotifier<int> {
         }
       }
     }
+  }
+
+  // ✅ Fungsi untuk mengunduh MP3 dengan Retry 3x
+  Future<File?> _downloadMp3(
+      BuildContext context, String surahNumber, String audioUrl) async {
+    final connectivity = await Connectivity().checkConnectivity();
+    // ✅ Update total ukuran file setelah download selesai
+    ref.read(downloadedSizeProvider.notifier).updateSize();
+
+    if (connectivity == ConnectivityResult.none) {
+      _showSnackbar(context, "❌ Tidak ada koneksi internet!", isError: true);
+      return null;
+    }
+
+    final directory = await getApplicationDocumentsDirectory();
+    final filePath = "${directory.path}/surah_$surahNumber.mp3";
+    final file = File(filePath);
+
+    if (await file.exists()) {
+      _showSnackbar(context, "✅ Audio sudah di download, langsung dimainkan.");
+      return file;
+    }
+
+    int retryCount = 0;
+    while (retryCount < 3) {
+      try {
+        Logger().i("⬇ Mengunduh audio...");
+        final response = await http.get(Uri.parse(audioUrl));
+
+        if (response.statusCode == 200) {
+          await file.writeAsBytes(response.bodyBytes);
+          _showSnackbar(context, "Download selesai..");
+
+          // ✅ Update total ukuran file setelah download selesai
+          ref.read(downloadedSizeProvider.notifier).updateSize();
+
+          return file;
+        } else {
+          retryCount++;
+          if (retryCount == 3) {
+            _showSnackbar(
+                context, "❌ Gagal mengunduh audio setelah 3 kali mencoba!",
+                isError: true);
+          }
+        }
+      } catch (e) {
+        retryCount++;
+        if (retryCount == 3) {
+          _showSnackbar(context, "❌ Error saat mengunduh: $e", isError: true);
+        }
+      }
+    }
+    return null;
+  }
+
+  // ✅ Menampilkan Snackbar
+  void _showSnackbar(BuildContext context, String message,
+      {bool isError = false}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isError ? Colors.red : Colors.green,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    );
   }
 
   // ✅ Fungsi untuk memilih surah tanpa langsung memutarnya
@@ -145,18 +238,18 @@ class AudioFullPlayerNotifier extends StateNotifier<int> {
     _notifications.cancel(0);
   }
 
-  Future<void> nextSurah() async {
+  Future<void> nextSurah(BuildContext context) async {
     final surahList = ref.read(quranProvider);
     if (state + 1 < surahList.length) {
-      playSurah(state + 1);
+      playSurah(context, state + 1);
     } else {
       ref.read(isPlayingAudioProvider.notifier).state = false;
     }
   }
 
-  Future<void> previousSurah() async {
+  Future<void> previousSurah(BuildContext context) async {
     if (state - 1 >= 0) {
-      playSurah(state - 1);
+      playSurah(context, state - 1);
     }
   }
 }

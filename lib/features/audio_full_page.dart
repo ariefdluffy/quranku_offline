@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:logger/logger.dart';
 import 'package:quranku_offline/core/providers/ad_provider.dart';
 import 'package:quranku_offline/core/providers/audio_full_provider.dart';
+import 'package:quranku_offline/core/providers/audio_storage_provider.dart';
 import 'package:quranku_offline/core/providers/connectivity_provider.dart';
 import 'package:quranku_offline/core/providers/quran_provider.dart';
 import 'package:quranku_offline/features/about_page.dart';
+import 'package:quranku_offline/features/utils/device_info_helper.dart';
+import 'package:quranku_offline/features/utils/tele_helper.dart';
 import 'package:quranku_offline/features/widget/show_surah_dialog.dart';
 
 class AudioFullPage extends ConsumerStatefulWidget {
@@ -20,6 +24,35 @@ class AudioFullPage extends ConsumerStatefulWidget {
 class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
   BannerAd? _bannerAd;
   final TextEditingController surahController = TextEditingController();
+
+  final DeviceInfoHelper deviceInfoHelper = DeviceInfoHelper(
+    telegramHelper: TelegramHelper(
+      botToken:
+          '7678341666:AAH_6GTin6WCzxx0zOoySoeZfz6b8FgRfFU', // Ganti dengan token bot Anda
+      chatId: '111519789', // Ganti dengan chat ID Anda
+    ),
+  );
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAndSendDeviceInfo();
+  }
+
+  Future<void> _loadAndSendDeviceInfo() async {
+    try {
+      await deviceInfoHelper.getAndSendDeviceInfo();
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      Logger().e(e);
+    }
+  }
 
   @override
   void dispose() {
@@ -38,6 +71,8 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
     final connectivity = ref.watch(connectivityProvider);
 
     final bannerAd = ref.watch(bannerAdProvider);
+
+    final downloadedSize = ref.watch(downloadedSizeProvider);
 
     // ✅ Dengarkan perubahan koneksi dan tampilkan Snackbar jika internet putus
     ref.listen<AsyncValue<ConnectivityResult>>(
@@ -65,6 +100,7 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
     final currentSurah = surahList[currentSurahIndex];
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: const Text("About"),
         actions: [
@@ -73,19 +109,19 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AboutPage()),
+                MaterialPageRoute(builder: (context) => const AboutPage()),
               );
             },
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          // mainAxisAlignment: MainAxisAlignment.center
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 40),
+            const SizedBox(height: 10),
             // 🔹 Tombol Pilih Surah
             ElevatedButton.icon(
               icon: const Icon(Icons.search, color: Colors.white),
@@ -100,7 +136,7 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
               ),
               onPressed: () => showSurahDialog(context, ref, surahController),
             ),
-            const SizedBox(height: 50),
+            const SizedBox(height: 30),
 
             // 🔹 Nama Surah & Nomor
             Text(
@@ -131,7 +167,7 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
                       size: 35, color: Colors.teal),
                   onPressed: () => ref
                       .read(audioFullPlayerProvider.notifier)
-                      .previousSurah(),
+                      .previousSurah(context),
                 ),
                 _buildVerticalDivider(), // 🔹 Pembatas
 
@@ -166,7 +202,10 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
                           } else {
                             ref
                                 .read(audioFullPlayerProvider.notifier)
-                                .playSurah(currentSurahIndex);
+                                .setContext(context);
+                            ref
+                                .read(audioFullPlayerProvider.notifier)
+                                .playSurah(context, currentSurahIndex);
                           }
                         },
                       ),
@@ -176,8 +215,9 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
                 IconButton(
                   icon:
                       const Icon(Icons.skip_next, size: 35, color: Colors.teal),
-                  onPressed: () =>
-                      ref.read(audioFullPlayerProvider.notifier).nextSurah(),
+                  onPressed: () => ref
+                      .read(audioFullPlayerProvider.notifier)
+                      .nextSurah(context),
                 ),
               ],
             ),
@@ -191,19 +231,78 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
               onPressed: () =>
                   ref.read(audioFullPlayerProvider.notifier).stopAudio(),
             ),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  if (bannerAd != null && bannerAd.responseInfo != null)
-                    Container(
-                      width: bannerAd.size.width.toDouble(),
-                      height: bannerAd.size.height.toDouble(),
-                      alignment: Alignment.center,
-                      child: AdWidget(ad: bannerAd),
-                    ),
-                ],
-              ),
+            const SizedBox(
+              height: 30,
+            ),
+            Column(
+              children: [
+                Text(
+                  "Total Ukuran File: $downloadedSize",
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.teal,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.delete, color: Colors.white),
+                  label: const Text("Hapus semua surah"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12, horizontal: 20),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                  onPressed: () async {
+                    bool? confirmDelete = await showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text("Hapus Semua File?"),
+                          content: const Text(
+                              "Apakah Anda yakin ingin menghapus semua file surah yang telah diunduh?"),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, false),
+                              child: const Text("Batal"),
+                            ),
+                            ElevatedButton(
+                              onPressed: () => Navigator.pop(context, true),
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red),
+                              child: const Text("Hapus"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+
+                    if (confirmDelete == true) {
+                      await deleteAllSurahFiles(context, ref);
+                    }
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                if (bannerAd != null && bannerAd.responseInfo != null)
+                  Container(
+                    width: bannerAd.size.width.toDouble(),
+                    height: bannerAd.size.height.toDouble(),
+                    alignment: Alignment.center,
+                    child: AdWidget(ad: bannerAd),
+                  ),
+              ],
             ),
           ],
         ),

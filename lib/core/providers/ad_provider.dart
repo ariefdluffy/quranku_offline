@@ -5,7 +5,6 @@ import 'package:logger/logger.dart';
 final bannerAdProvider =
     StateNotifierProvider<BannerAdNotifier, BannerAd?>((ref) {
   final provider = BannerAdNotifier();
-  // ref.keepAlive(); // ✅ Menjaga agar iklan tidak dihapus saat halaman berubah
   return provider;
 });
 
@@ -67,11 +66,11 @@ class BannerAdNotifier extends StateNotifier<BannerAd?> {
   }
 }
 
-final bannerAdProviderNew = Provider.autoDispose<BannerAd?>((ref) {
+final bannerAdProviderPerSurah = Provider.autoDispose<BannerAd?>((ref) {
   final BannerAd bannerAd = BannerAd(
     size: AdSize.banner,
     adUnitId:
-        'ca-app-pub-2393357737286916/9178085661', // ✅ Ganti dengan ID Asli
+        'ca-app-pub-2393357737286916/2808898682', // ✅ Ganti dengan ID Asli
     listener: BannerAdListener(
       onAdLoaded: (ad) => ref.onDispose(() => ad.dispose()),
       onAdFailedToLoad: (ad, error) {

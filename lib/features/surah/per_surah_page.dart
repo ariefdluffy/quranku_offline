@@ -14,7 +14,7 @@ class PerSurahPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final surahList = ref.watch(quranProvider);
 
-    final bannerAd = ref.watch(bannerAdProviderNew);
+    final bannerAd = ref.watch(bannerAdProviderPerSurah);
 
     // final scrollController = ref.watch(scrollControllerProvider);
     // final isFabVisible =
