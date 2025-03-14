@@ -177,6 +177,7 @@ class AudioFullPlayerNotifier extends StateNotifier<int> {
     while (retryCount < 3) {
       try {
         Logger().i("⬇ Mengunduh audio...");
+        _showSnackbar(context, "Mengunduh audio..");
         final response = await http.get(Uri.parse(audioUrl));
 
         if (response.statusCode == 200) {
@@ -190,8 +191,8 @@ class AudioFullPlayerNotifier extends StateNotifier<int> {
         } else {
           retryCount++;
           if (retryCount == 3) {
-            _showSnackbar(
-                context, "❌ Gagal mengunduh audio setelah 3 kali mencoba!",
+            _showSnackbar(context,
+                "❌ Gagal mengunduh audio setelah 3 kali mencoba, cek koneksi internet!",
                 isError: true);
           }
         }
