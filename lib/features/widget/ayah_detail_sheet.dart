@@ -126,7 +126,7 @@ class AyahDetailSheet extends ConsumerWidget {
 
               // 🔹 Tombol Play/Pause Audio
               Padding(
-                padding: const EdgeInsets.only(bottom: 10.0),
+                padding: const EdgeInsets.only(bottom: 5.0),
                 child: IconButton(
                   icon: Icon(
                     isPlaying

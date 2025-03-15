@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+// import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
@@ -10,6 +11,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:quranku_offline/core/providers/audio_storage_provider.dart';
 import 'package:quranku_offline/core/providers/quran_provider.dart';
 import 'package:http/http.dart' as http;
+// import 'package:quranku_offline/core/services/background_service.dart';
+import 'package:workmanager/workmanager.dart';
 
 final audioFullPlayerProvider =
     StateNotifierProvider<AudioFullPlayerNotifier, int>(
@@ -30,12 +33,17 @@ class AudioFullPlayerNotifier extends StateNotifier<int> {
   BuildContext? _context;
 
   AudioFullPlayerNotifier(this.ref) : super(0) {
+    // startBackgroundService();
     _audioPlayer.onPlayerComplete.listen((event) {
       if (_context != null) {
         nextSurah(_context!);
       }
     });
   }
+
+  // void startBackgroundService() {
+  //   initializeService();
+  // }
 
   // ✅ Simpan context dari UI agar bisa digunakan di fungsi lain
   void setContext(BuildContext context) {
@@ -169,16 +177,31 @@ class AudioFullPlayerNotifier extends StateNotifier<int> {
     final file = File(filePath);
 
     if (await file.exists()) {
-      _showSnackbar(context, "✅ Audio sudah di download, langsung dimainkan.");
+      // _showSnackbar(context, "✅ Audio sudah di download, langsung dimainkan.");
       return file;
     }
+
+    // _showSnackbar(context, "Mengunduh audio di latar belakang...");
+
+    // await Workmanager().registerOneOffTask(
+    //   "download_mp3_task_${DateTime.now().millisecondsSinceEpoch}", // Unique ID untuk task
+    //   "download_mp3_task",
+    //   inputData: {
+    //     "surahNumber": surahNumber,
+    //     "audioUrl": audioUrl,
+    //   },
+    // );
 
     int retryCount = 0;
     while (retryCount < 3) {
       try {
         Logger().i("⬇ Mengunduh audio...");
         _showSnackbar(context, "Mengunduh audio..");
-        final response = await http.get(Uri.parse(audioUrl));
+        final response = await http
+            .get(
+              Uri.parse(audioUrl),
+            )
+            .timeout(const Duration(seconds: 10)); // Timeout 10 detik
 
         if (response.statusCode == 200) {
           await file.writeAsBytes(response.bodyBytes);
@@ -242,6 +265,8 @@ class AudioFullPlayerNotifier extends StateNotifier<int> {
   Future<void> nextSurah(BuildContext context) async {
     final surahList = ref.read(quranProvider);
     if (state + 1 < surahList.length) {
+      // FlutterBackgroundService().invoke("next_surah");
+
       playSurah(context, state + 1);
     } else {
       ref.read(isPlayingAudioProvider.notifier).state = false;
@@ -251,6 +276,7 @@ class AudioFullPlayerNotifier extends StateNotifier<int> {
   Future<void> previousSurah(BuildContext context) async {
     if (state - 1 >= 0) {
       playSurah(context, state - 1);
+      ref.read(isPlayingAudioProvider.notifier).state = false;
     }
   }
 }

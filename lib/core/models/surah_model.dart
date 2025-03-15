@@ -1,5 +1,8 @@
+import 'package:logger/logger.dart';
 import 'package:quranku_offline/core/models/ayah_model.dart';
 import 'package:quranku_offline/core/models/next_prev_surat_model.dart';
+
+final Logger logger = Logger();
 
 class Surah {
   final int nomor;
@@ -11,6 +14,7 @@ class Surah {
   final String deskripsi;
   final Map<String, String> audioFull; // Audio full dari beberapa qari
   final List<Ayah> ayat;
+  // final List<SurahAyatList> ayatlist;
   final SuratSelanjutnya? suratSelanjutnya;
   final SuratSebelumnya? suratSebelumnya;
 
@@ -29,6 +33,20 @@ class Surah {
   });
 
   factory Surah.fromJson(Map<String, dynamic> json) {
+    List<Ayah> sortedAyat = (json['ayat'] as List? ?? [])
+        .map((e) => Ayah.fromJson({...e, 'nomorSurah': json['nomor']}))
+        .toList();
+
+    // ✅ Pastikan ayat selalu dalam urutan yang benar
+    sortedAyat.sort((a, b) => a.nomorAyat.compareTo(b.nomorAyat));
+
+    // // 🔹 Cetak JSON ke Logger (cek apakah data benar)
+    // logger.i(
+    //     "✅ Surah ${json['namaLatin']} (${json['nomor']}), Jumlah Ayat: ${json['jumlahAyat']}");
+    // for (var ayah in sortedAyat) {
+    //   logger.d("📖 Ayat ${ayah.nomorAyat}: ${ayah.teksArab}");
+    // }
+
     return Surah(
       nomor: json['nomor'] ?? 0,
       nama: json['nama'] ?? "",
@@ -37,10 +55,12 @@ class Surah {
       tempatTurun: json['tempatTurun'] ?? "",
       arti: json['arti'] ?? "",
       deskripsi: json['deskripsi'] ?? "",
+      ayat: sortedAyat,
+      // ayatlist: sortedAyat,
       audioFull: Map<String, String>.from(json['audioFull'] ?? {}),
-      ayat: (json['ayat'] as List? ?? [])
-          .map((e) => Ayah.fromJson({...e, 'nomorSurah': json['nomor']}))
-          .toList(),
+      // ayat: (json['ayat'] as List? ?? [])
+      //     .map((e) => Ayah.fromJson({...e, 'nomorSurah': json['nomor']}))
+      //     .toList(),
       suratSelanjutnya: json['suratSelanjutnya'] != null
           ? SuratSelanjutnya.fromJson(json['suratSelanjutnya'])
           : null,

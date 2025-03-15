@@ -1,5 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -27,17 +28,36 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
 
   final DeviceInfoHelper deviceInfoHelper = DeviceInfoHelper(
     telegramHelper: TelegramHelper(
-      botToken:
-          '7678341666:AAH_6GTin6WCzxx0zOoySoeZfz6b8FgRfFU', // Ganti dengan token bot Anda
-      chatId: '111519789', // Ganti dengan chat ID Anda
+      botToken: dotenv.env['BOT_TOKEN'] ?? '',
+      chatId: dotenv.env['CHAT_ID'] ?? '',
+      // botToken:
+      //     '7678341666:AAH_6GTin6WCzxx0zOoySoeZfz6b8FgRfFU', // Ganti dengan token bot Anda
+      // chatId: '111519789', // Ganti dengan chat ID Anda
     ),
   );
   bool isLoading = true;
+
+  // final AudioPlayer _audioPlayer = AudioPlayer();
+
+  // Future<void> checkAndPlayAudio(BuildContext context, WidgetRef ref) async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final filePath = prefs.getString("downloaded_audio");
+
+  //   if (filePath != null) {
+  //     ref.read(downloadStatusProvider.notifier).state = true;
+
+  //     final audioPlayer = AudioPlayer();
+  //     await audioPlayer.play(DeviceFileSource(filePath));
+
+  //     // _showSnackbar(context, "🎵 Audio Diputar!");
+  //   }
+  // }
 
   @override
   void initState() {
     super.initState();
     _loadAndSendDeviceInfo();
+    // Future.microtask(() => checkAndPlayAudio(context, ref));
   }
 
   Future<void> _loadAndSendDeviceInfo() async {
@@ -121,7 +141,7 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 10),
+            const SizedBox(height: 40),
             // 🔹 Tombol Pilih Surah
             ElevatedButton.icon(
               icon: const Icon(Icons.search, color: Colors.white),
@@ -150,8 +170,8 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
             const SizedBox(height: 5),
             Text(
               currentSurah.nama,
-              style: GoogleFonts.lateef(
-                fontSize: 28,
+              style: GoogleFonts.amiri(
+                fontSize: 38,
                 fontWeight: FontWeight.w500,
                 color: Colors.black,
               ),
@@ -274,8 +294,11 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
                             ElevatedButton(
                               onPressed: () => Navigator.pop(context, true),
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.red),
-                              child: const Text("Hapus"),
+                                  backgroundColor: Colors.redAccent),
+                              child: const Text(
+                                "Hapus",
+                                style: TextStyle(color: Colors.white),
+                              ),
                             ),
                           ],
                         );
