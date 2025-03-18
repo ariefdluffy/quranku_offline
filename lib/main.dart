@@ -4,7 +4,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:quranku_offline/features/home/home_page.dart';
+import 'package:quranku_offline/core/services/background_service.dart';
+import 'package:quranku_offline/bottom_nav_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,6 +14,7 @@ void main() async {
   } catch (e) {
     throw Exception('Error loading .env file: $e'); // Print error if any
   }
+  // await initializeService();
   await MobileAds.instance.initialize();
   await Connectivity().checkConnectivity();
 
@@ -53,7 +55,7 @@ class MainApp extends ConsumerWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const HomePage(),
+      home: const BottomNavView(),
     );
   }
 }

@@ -1,89 +1,139 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:quranku_offline/core/providers/ad_provider.dart';
-import 'package:quranku_offline/core/providers/navigation_provider.dart';
-import 'package:quranku_offline/features/audio_full_page.dart';
-import 'package:quranku_offline/features/surah/lengkap_page.dart';
-import 'package:quranku_offline/features/surah/per_surah_page.dart';
+import 'package:quranku_offline/core/providers/quran_provider.dart';
+import 'package:quranku_offline/dzikir_pagi/dzikir_pagi_page.dart';
+import 'package:quranku_offline/features/bookmark_page.dart';
+import 'package:quranku_offline/features/widget/shimmer_loading.dart';
+import 'package:quranku_offline/features/widget/surah_card.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentIndex = ref.watch(navigationProvider);
+    final surahList = ref.watch(quranProvider);
+    final bannerAd = ref.watch(bannerAdProviderPerSurah);
 
-    // List Halaman sesuai dengan indeks Bottom Navigation Bar
-    final List<Widget> pages = [
-      const PerSurahPage(),
-      const LengkapPage(),
-      const AudioFullPage(),
-      // const AboutPage(),
-    ];
-
-    return OrientationBuilder(builder: (context, orientation) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (orientation == Orientation.landscape) {
-          SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
-        } else {
-          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-        }
-      });
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            "Al-Quran Offline",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.green, Colors.teal],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+    return Scaffold(
+      body: Column(
+        children: [
+          SizedBox(
+            height: 120,
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: GridView.count(
+                crossAxisCount: 4, // 2 kolom
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                children: [
+                  _buildMenuCard(
+                    icon: Icons.sunny,
+                    label: "Dzikir Pagi",
+                    color: const Color.fromARGB(255, 231, 215, 66),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const DzikirPagiPage()));
+                    },
+                  ),
+                  _buildMenuCard(
+                    icon: Icons.mode_night_outlined,
+                    label: "Dzikir Petang",
+                    color: Colors.blueGrey,
+                    onTap: () {
+                      // Aksi ketika menu diklik
+                      print("Murottal diklik");
+                    },
+                  ),
+                  _buildMenuCard(
+                    icon: Icons.wysiwyg,
+                    label: "Dzikir Sholat",
+                    color: Colors.pinkAccent,
+                    onTap: () {
+                      // Aksi ketika menu diklik
+                      print("Murottal diklik");
+                    },
+                  ),
+                  _buildMenuCard(
+                    icon: Icons.bookmark_added_rounded,
+                    label: "Bookmark",
+                    color: Colors.redAccent,
+                    onTap: () {
+                      // Aksi ketika menu diklik
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const BookmarkPage()),
+                      );
+                    },
+                  ),
+                ],
               ),
             ),
           ),
-          centerTitle: true,
+          Container(
+            alignment: Alignment.centerLeft, // Menempatkan teks ke kiri
+            padding: const EdgeInsets.symmetric(
+                horizontal: 16), // Tambahkan padding biar rapi
+            child: const Text(
+              "Daftar Surah",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Expanded(
+            // Gunakan Expanded di sini agar mengambil sisa tinggi yang tersedia
+            child: surahList.isEmpty
+                ? const ShimmerLoading(
+                    itemCount: 9,
+                  )
+                : Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 10),
+                    child: ListView.builder(
+                      itemCount: surahList.length,
+                      itemBuilder: (context, index) {
+                        final surah = surahList[index];
+                        return SurahCard(surah: surah);
+                      },
+                    ),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMenuCard(
+      {required IconData icon,
+      required String label,
+      required Color color,
+      required VoidCallback onTap}) {
+    return InkWell(
+      onTap: onTap,
+      child: Card(
+        elevation: 5,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: color.withOpacity(0.1),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 25, color: color),
+              const SizedBox(height: 5),
+              Text(
+                label,
+                style: const TextStyle(fontSize: 10),
+              ),
+            ],
+          ),
         ),
-        body: pages[currentIndex], // Menampilkan halaman berdasarkan indeks
-        bottomNavigationBar: orientation == Orientation.portrait
-            ? BottomNavigationBar(
-                currentIndex: currentIndex,
-                onTap: (index) {
-                  // ref.read(navigationProvider.notifier).changePage(index);
-                  ref.read(navigationProvider.notifier).state = index;
-                  if (index == 0) {
-                    ref
-                        .read(bannerAdProvider.notifier)
-                        .reloadAd(); // 🔹 Muat ulang iklan saat navigasi
-                  }
-                },
-                items: const [
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.book),
-                    label: "Surah",
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.menu_book),
-                    label: "Al-Qur'an",
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.spatial_audio_off),
-                    label: "Audio",
-                  ),
-                  // BottomNavigationBarItem(
-                  //   icon: Icon(Icons.more_vert_outlined),
-                  //   label: "",
-                  // ),
-                ],
-                selectedItemColor: Colors.teal,
-                unselectedItemColor: Colors.grey,
-                showUnselectedLabels: true,
-              )
-            : null,
-      );
-    });
+      ),
+    );
   }
 }

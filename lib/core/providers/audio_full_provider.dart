@@ -4,15 +4,17 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_background_service/flutter_background_service.dart';
+// import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:quranku_offline/core/providers/audio_storage_provider.dart';
+import 'package:quranku_offline/core/providers/download_status_provider.dart';
 import 'package:quranku_offline/core/providers/quran_provider.dart';
 import 'package:http/http.dart' as http;
 // import 'package:quranku_offline/core/services/background_service.dart';
-import 'package:workmanager/workmanager.dart';
+// import 'package:workmanager/workmanager.dart';
 
 final audioFullPlayerProvider =
     StateNotifierProvider<AudioFullPlayerNotifier, int>(
@@ -141,16 +143,6 @@ class AudioFullPlayerNotifier extends StateNotifier<int> {
               "Sedang diputar...",
             );
           }
-          // await _audioPlayer.play(UrlSource(audioUrl));
-
-          // ref.read(isLoadingAudioProvider.notifier).state =
-          //     false; // ✅ Audio sedang diputar
-          // ref.read(isPlayingAudioProvider.notifier).state = true;
-
-          // _showNotification(
-          //   "${surah.namaLatin}: ${surah.nomor}",
-          //   "Sedang diputar...",
-          // );
         } catch (e) {
           ref.read(audioFullErrorProvider.notifier).state =
               "Gagal memutar audio: $e"; // ✅ Simpan pesan error
@@ -160,14 +152,13 @@ class AudioFullPlayerNotifier extends StateNotifier<int> {
     }
   }
 
-  // ✅ Fungsi untuk mengunduh MP3 dengan Retry 3x
   Future<File?> _downloadMp3(
       BuildContext context, String surahNumber, String audioUrl) async {
     final connectivity = await Connectivity().checkConnectivity();
     // ✅ Update total ukuran file setelah download selesai
     ref.read(downloadedSizeProvider.notifier).updateSize();
 
-    if (connectivity == ConnectivityResult.none) {
+    if (connectivity.contains(ConnectivityResult.none)) {
       _showSnackbar(context, "❌ Tidak ada koneksi internet!", isError: true);
       return null;
     }
@@ -177,31 +168,20 @@ class AudioFullPlayerNotifier extends StateNotifier<int> {
     final file = File(filePath);
 
     if (await file.exists()) {
-      // _showSnackbar(context, "✅ Audio sudah di download, langsung dimainkan.");
+      _showSnackbar(context, "Audio langsung dimainkan.");
       return file;
     }
 
     // _showSnackbar(context, "Mengunduh audio di latar belakang...");
-
-    // await Workmanager().registerOneOffTask(
-    //   "download_mp3_task_${DateTime.now().millisecondsSinceEpoch}", // Unique ID untuk task
-    //   "download_mp3_task",
-    //   inputData: {
-    //     "surahNumber": surahNumber,
-    //     "audioUrl": audioUrl,
-    //   },
-    // );
 
     int retryCount = 0;
     while (retryCount < 3) {
       try {
         Logger().i("⬇ Mengunduh audio...");
         _showSnackbar(context, "Mengunduh audio..");
-        final response = await http
-            .get(
-              Uri.parse(audioUrl),
-            )
-            .timeout(const Duration(seconds: 10)); // Timeout 10 detik
+        final response = await http.get(
+          Uri.parse(audioUrl),
+        );
 
         if (response.statusCode == 200) {
           await file.writeAsBytes(response.bodyBytes);

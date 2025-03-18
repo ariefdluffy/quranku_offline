@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
-
+import 'dart:io';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:http/http.dart' as http;
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:quranku_offline/core/models/ayah_model.dart';
 import 'package:quranku_offline/core/services/quran_services.dart';
 import '../models/surah_model.dart';
@@ -209,7 +212,7 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayer> {
 
     try {
       // await state.stop();
-      await state.play(UrlSource(url)).timeout(const Duration(seconds: 20));
+      await state.play(UrlSource(url));
       ref.read(isPlayingProvider.notifier).state = true;
     } on TimeoutException {
       ref.read(audioErrorProvider.notifier).state =

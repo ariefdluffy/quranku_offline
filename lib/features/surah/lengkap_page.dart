@@ -5,6 +5,7 @@ import 'package:quranku_offline/core/providers/quran_provider.dart';
 import 'package:quranku_offline/features/bookmark_page.dart';
 import 'package:quranku_offline/features/widget/ayat_text_widget.dart';
 import 'package:quranku_offline/features/widget/shimmer_loading.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 class LengkapPage extends ConsumerWidget {
   const LengkapPage({super.key});
@@ -13,6 +14,14 @@ class LengkapPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // ✅ Aktifkan layar tetap menyala setiap kali halaman ini dibuka
+    WakelockPlus.enable();
+
+    ref.listen(quranProvider, (previous, next) {
+      // ✅ Matikan layar tetap menyala saat keluar halaman
+      WakelockPlus.disable();
+    });
+
     final surahList = ref.watch(quranProvider);
     final currentPage = ref.watch(quranPaginationProvider);
 
@@ -40,21 +49,6 @@ class LengkapPage extends ConsumerWidget {
     String namaSurah = surahList
         .firstWhere((surah) => surah.nomor == currentAyahList.first.nomorSurah)
         .namaLatin;
-
-    // String nomor = surahList
-    //     .firstWhere((surah) => surah.nomor == currentAyahList.first.nomorSurah)
-    //     .nomor
-    //     .toString();
-
-    // // 🔹 Gabungkan semua ayat dari seluruh surah
-    // final allAyatList = surahList.map((surah) {
-    //   return SurahAyatList(
-    //     nomorSurah: surah.nomor,
-    //     namaSurah: surah.nama,
-    //     namaLatin: surah.namaLatin,
-    //     ayatList: surah.ayat,
-    //   );
-    // }).toList();
 
     return OrientationBuilder(
       builder: (context, orientation) {

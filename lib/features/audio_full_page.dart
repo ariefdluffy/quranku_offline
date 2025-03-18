@@ -9,6 +9,7 @@ import 'package:quranku_offline/core/providers/ad_provider.dart';
 import 'package:quranku_offline/core/providers/audio_full_provider.dart';
 import 'package:quranku_offline/core/providers/audio_storage_provider.dart';
 import 'package:quranku_offline/core/providers/connectivity_provider.dart';
+import 'package:quranku_offline/core/providers/download_status_provider.dart';
 import 'package:quranku_offline/core/providers/quran_provider.dart';
 import 'package:quranku_offline/features/about_page.dart';
 import 'package:quranku_offline/features/utils/device_info_helper.dart';
@@ -36,22 +37,6 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
     ),
   );
   bool isLoading = true;
-
-  // final AudioPlayer _audioPlayer = AudioPlayer();
-
-  // Future<void> checkAndPlayAudio(BuildContext context, WidgetRef ref) async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final filePath = prefs.getString("downloaded_audio");
-
-  //   if (filePath != null) {
-  //     ref.read(downloadStatusProvider.notifier).state = true;
-
-  //     final audioPlayer = AudioPlayer();
-  //     await audioPlayer.play(DeviceFileSource(filePath));
-
-  //     // _showSnackbar(context, "🎵 Audio Diputar!");
-  //   }
-  // }
 
   @override
   void initState() {
@@ -93,6 +78,7 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
     final bannerAd = ref.watch(bannerAdProvider);
 
     final downloadedSize = ref.watch(downloadedSizeProvider);
+    // final downloadProgress = ref.watch(downloadProgressProvider);
 
     // ✅ Dengarkan perubahan koneksi dan tampilkan Snackbar jika internet putus
     ref.listen<AsyncValue<ConnectivityResult>>(
@@ -256,6 +242,16 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
             ),
             Column(
               children: [
+                // if (downloadProgress > 0 && downloadProgress < 100)
+                //   Text(
+                //     "Mengunduh: ${downloadProgress.toStringAsFixed(1)}%",
+                //     style: const TextStyle(
+                //       fontSize: 12,
+                //       fontWeight: FontWeight.bold,
+                //       color: Colors.teal,
+                //     ),
+                //   ),
+                // const SizedBox(height: 10),
                 Text(
                   "Total Ukuran File: $downloadedSize",
                   style: const TextStyle(

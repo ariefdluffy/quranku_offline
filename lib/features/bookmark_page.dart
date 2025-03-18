@@ -13,7 +13,19 @@ class BookmarkPage extends ConsumerWidget {
     final surahList = ref.watch(quranProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Daftar Bookmark")),
+      appBar: AppBar(
+        title: const Text("Daftar Bookmark"),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.green, Colors.teal],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+        centerTitle: true,
+      ),
       body: bookmarkList.isEmpty
           ? const Center(
               child: Text(

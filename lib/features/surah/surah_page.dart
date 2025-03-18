@@ -258,31 +258,31 @@ class _SurahPageState extends ConsumerState<SurahPage> {
       ),
 
       // 🔹 Floating Action Button (FAB) hanya muncul jika bisa di-scroll
-      // floatingActionButton: isFabVisible
-      //     ? FloatingActionButton(
-      //         onPressed: () {
-      //           if (scrollController.hasClients) {
-      //             final isAtBottom = scrollController.position.pixels >=
-      //                 scrollController.position.maxScrollExtent - 50;
-      //             if (isAtBottom) {
-      //               ref.read(scrollControllerProvider.notifier).scrollToTop();
-      //             } else {
-      //               ref
-      //                   .read(scrollControllerProvider.notifier)
-      //                   .scrollToBottom();
-      //             }
-      //           }
-      //         },
-      //         backgroundColor: Colors.teal,
-      //         child: Icon(
-      //           scrollController.hasClients &&
-      //                   scrollController.position.pixels >=
-      //                       scrollController.position.maxScrollExtent - 50
-      //               ? Icons.arrow_upward
-      //               : Icons.arrow_downward,
-      //         ),
-      //       )
-      //     : null, // ✅ FAB disembunyikan jika konten hanya 1 layar
+      floatingActionButton: isFabVisible
+          ? FloatingActionButton(
+              onPressed: () {
+                if (scrollController.hasClients) {
+                  final isAtBottom = scrollController.position.pixels >=
+                      scrollController.position.maxScrollExtent - 50;
+                  if (isAtBottom) {
+                    ref.read(scrollControllerProvider.notifier).scrollToTop();
+                  } else {
+                    ref
+                        .read(scrollControllerProvider.notifier)
+                        .scrollToBottom();
+                  }
+                }
+              },
+              backgroundColor: Colors.teal,
+              child: Icon(
+                scrollController.hasClients &&
+                        scrollController.position.pixels >=
+                            scrollController.position.maxScrollExtent - 50
+                    ? Icons.arrow_upward
+                    : Icons.arrow_downward,
+              ),
+            )
+          : null, // ✅ FAB disembunyikan jika konten hanya 1 layar
     );
   }
 }
