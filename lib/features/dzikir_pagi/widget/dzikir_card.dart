@@ -1,42 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../core/models/dzikir_pagi_model.dart';
-import '../core/providers/dzikir/dzikir_pagi_provider.dart';
-
-class DzikirPagiPage extends ConsumerWidget {
-  const DzikirPagiPage({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final dzikirList = ref.watch(dzikirProvider);
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Dzikir Pagi",
-            style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.teal.shade700,
-        foregroundColor: Colors.white,
-        centerTitle: true,
-      ),
-      backgroundColor:
-          Colors.teal.shade50, // Background dengan nuansa hijau lembut
-      body: dzikirList.isEmpty
-          ? const Center(child: CircularProgressIndicator(color: Colors.teal))
-          : ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-              itemCount: dzikirList.length,
-              itemBuilder: (context, index) {
-                DzikirPagi dzikir = dzikirList[index];
-                return DzikirCard(dzikir: dzikir);
-              },
-            ),
-    );
-  }
-}
+import 'package:quranku_offline/core/models/dzikir_pagi_model.dart';
 
 class DzikirCard extends StatefulWidget {
   final DzikirPagi dzikir;
+
   const DzikirCard({super.key, required this.dzikir});
 
   @override
@@ -44,17 +12,17 @@ class DzikirCard extends StatefulWidget {
 }
 
 class _DzikirCardState extends State<DzikirCard> {
-  bool _expanded = false;
+  bool _expanded = false; // State lokal untuk ekspansi
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Card(
         elevation: 4,
-        margin: const EdgeInsets.symmetric(horizontal: 12),
+        margin: const EdgeInsets.all(12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -81,7 +49,7 @@ class _DzikirCardState extends State<DzikirCard> {
                 text: TextSpan(
                   text: "${widget.dzikir.arab} ",
                   style: GoogleFonts.lateef(
-                    fontSize: 30,
+                    fontSize: 36,
                     fontWeight: FontWeight.w500,
                     color: Colors.black,
                   ),
@@ -92,6 +60,7 @@ class _DzikirCardState extends State<DzikirCard> {
                 "${widget.dzikir.latin}",
                 style: const TextStyle(
                   fontSize: 12,
+                  fontStyle: FontStyle.italic,
                 ),
                 textAlign: TextAlign.justify,
               ),

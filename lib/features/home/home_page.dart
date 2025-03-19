@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:quranku_offline/core/providers/ad_provider.dart';
 import 'package:quranku_offline/core/providers/quran_provider.dart';
-import 'package:quranku_offline/dzikir_pagi/dzikir_pagi_page.dart';
+import 'package:quranku_offline/features/dzikir_pagi/dzikir_pagi_page.dart';
 import 'package:quranku_offline/features/bookmark_page.dart';
+import 'package:quranku_offline/features/dzikir_petang/dzikir_petang_page.dart';
+import 'package:quranku_offline/features/dzikir_sholat/dzikri_sholat_page.dart';
 import 'package:quranku_offline/features/widget/shimmer_loading.dart';
 import 'package:quranku_offline/features/widget/surah_card.dart';
 
@@ -33,7 +35,7 @@ class HomePage extends ConsumerWidget {
             ),
           ),
           SizedBox(
-            height: 100,
+            height: 110,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: GridView.count(
@@ -47,9 +49,11 @@ class HomePage extends ConsumerWidget {
                     color: const Color.fromARGB(255, 231, 215, 66),
                     onTap: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const DzikirPagiPage()));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const DzikirPagiPage(),
+                        ),
+                      );
                     },
                   ),
                   _buildMenuCard(
@@ -57,17 +61,25 @@ class HomePage extends ConsumerWidget {
                     label: "Dzikir Petang",
                     color: Colors.blueGrey,
                     onTap: () {
-                      // Aksi ketika menu diklik
-                      print("Murottal diklik");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const DzikirPetangPage(),
+                        ),
+                      );
                     },
                   ),
                   _buildMenuCard(
                     icon: Icons.wysiwyg,
                     label: "Dzikir Sholat",
-                    color: Colors.pinkAccent,
+                    color: Colors.orange,
                     onTap: () {
-                      // Aksi ketika menu diklik
-                      print("Murottal diklik");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const DzikirSholatPage(),
+                        ),
+                      );
                     },
                   ),
                   _buildMenuCard(

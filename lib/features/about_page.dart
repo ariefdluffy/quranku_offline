@@ -73,7 +73,13 @@ class _AboutPageState extends State<AboutPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.info_outline, size: 80, color: Colors.teal),
+                  // const Icon(Icons.info_outline, size: 80, color: Colors.teal),
+                  Image.asset(
+                    'assets/logo/logo-alquran-offline.png',
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  ),
                   const SizedBox(height: 16),
                   const Text(
                     "Al-Qur'an Offline",
@@ -102,25 +108,10 @@ class _AboutPageState extends State<AboutPage> {
                   const SizedBox(height: 8),
                   RichText(
                     textAlign: TextAlign.center,
-                    text: TextSpan(
-                      style: const TextStyle(fontSize: 10, color: Colors.grey),
+                    text: const TextSpan(
+                      style: TextStyle(fontSize: 10, color: Colors.grey),
                       children: [
-                        const TextSpan(
-                            text:
-                                "© 2025 Al-Qur-an Offline V1.1.1 - \nDibuat dengan ❤️ oleh "),
-                        TextSpan(
-                          text: "Miftahularif",
-                          style: const TextStyle(
-                            color: Colors.blue, // Warna teks yang dapat diklik
-                            decoration: TextDecoration
-                                .underline, // Garis bawah untuk menunjukkan bahwa teks dapat diklik
-                          ),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              // Fungsi untuk mengirim email
-                              _sendEmail();
-                            },
-                        ),
+                        TextSpan(text: "© 2025 Al-Qur-an Offline V1.1.3")
                       ],
                     ),
                   ),
