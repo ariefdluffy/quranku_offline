@@ -19,10 +19,23 @@ class HomePage extends ConsumerWidget {
     return Scaffold(
       body: Column(
         children: [
+          Container(
+            alignment: Alignment.centerLeft, // Menempatkan teks ke kiri
+            padding: const EdgeInsets.symmetric(
+                horizontal: 16, vertical: 10), // Tambahkan padding biar rapi
+            child: const Text(
+              "Dzikir Pilihan",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.teal,
+              ),
+            ),
+          ),
           SizedBox(
-            height: 120,
+            height: 100,
             child: Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: GridView.count(
                 crossAxisCount: 4, // 2 kolom
                 crossAxisSpacing: 12,
@@ -80,7 +93,10 @@ class HomePage extends ConsumerWidget {
                 horizontal: 16), // Tambahkan padding biar rapi
             child: const Text(
               "Daftar Surah",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.teal,
+                  fontWeight: FontWeight.bold),
             ),
           ),
           Expanded(

@@ -146,14 +146,22 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
 
             // 🔹 Nama Surah & Nomor
             Text(
-              "${currentSurah.namaLatin}: ${currentSurah.nomor}",
+              "QS. ${currentSurah.namaLatin}: ${currentSurah.nomor}",
               style: const TextStyle(
-                fontSize: 24,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Colors.teal,
               ),
             ),
-            const SizedBox(height: 5),
+            Text(
+              "${currentSurah.jumlahAyat} Ayat",
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.teal,
+              ),
+            ),
+            const SizedBox(height: 15),
             Text(
               currentSurah.nama,
               style: GoogleFonts.amiri(
@@ -162,7 +170,7 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
                 color: Colors.black,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 15),
 
             // 🔹 Kontrol Audio
             Row(
@@ -238,7 +246,7 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
                   ref.read(audioFullPlayerProvider.notifier).stopAudio(),
             ),
             const SizedBox(
-              height: 30,
+              height: 20,
             ),
             Column(
               children: [
