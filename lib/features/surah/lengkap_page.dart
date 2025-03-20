@@ -50,6 +50,18 @@ class LengkapPage extends ConsumerWidget {
         .firstWhere((surah) => surah.nomor == currentAyahList.first.nomorSurah)
         .namaLatin;
 
+    // 🔹 Ambil Nomor Surah dari `surahList`
+    String nomorSurah = surahList
+        .firstWhere((surah) => surah.nomor == currentAyahList.first.nomorSurah)
+        .nomor
+        .toString();
+
+    // 🔹 Ambil Jumlah ayat Latin surah dari `surahList`
+    String jumlahAyat = surahList
+        .firstWhere((surah) => surah.nomor == currentAyahList.first.nomorSurah)
+        .jumlahAyat
+        .toString();
+
     return OrientationBuilder(
       builder: (context, orientation) {
         if (orientation == Orientation.landscape) {
@@ -62,19 +74,8 @@ class LengkapPage extends ConsumerWidget {
         return Scaffold(
           appBar: orientation == Orientation.portrait
               ? AppBar(
-                  title: Text(namaSurah),
-                  // actions: [
-                  //   IconButton(
-                  //     icon: const Icon(Icons.bookmark, color: Colors.teal),
-                  //     onPressed: () {
-                  //       Navigator.push(
-                  //         context,
-                  //         MaterialPageRoute(
-                  //             builder: (context) => const BookmarkPage()),
-                  //       );
-                  //     },
-                  //   ),
-                  // ],
+                  title: Text(
+                      "$namaSurah: $nomorSurah ($jumlahAyat Ayat)"), // Nama surah di atas halaman
                 )
               : null, // Nama surah di atas halaman
           body: Column(

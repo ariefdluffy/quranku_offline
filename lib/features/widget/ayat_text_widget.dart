@@ -25,10 +25,16 @@ class AyahTextWidget extends StatelessWidget {
               .firstWhere((surah) => surah.nomor == ayah.nomorSurah)
               .namaLatin;
 
-          // 🔹 Ambil nama Latin surah dari `surahList`
+          // 🔹 Ambil Nomor Surah dari `surahList`
           String nomorSurah = surahList
               .firstWhere((surah) => surah.nomor == ayah.nomorSurah)
               .nomor
+              .toString();
+
+          // 🔹 Ambil Jumlah ayat Latin surah dari `surahList`
+          String jumlahAyat = surahList
+              .firstWhere((surah) => surah.nomor == ayah.nomorSurah)
+              .jumlahAyat
               .toString();
 
           // 🔹 Cek apakah ayat ini adalah ayat pertama dalam surah
@@ -69,7 +75,7 @@ class AyahTextWidget extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 5),
                           child: Text(
-                            "【 $namaSurah: $nomorSurah 】",
+                            "【 $namaSurah: $nomorSurah ($jumlahAyat Ayat) 】",
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -90,7 +96,7 @@ class AyahTextWidget extends StatelessWidget {
             TextSpan(
               children: [
                 TextSpan(
-                  text: " ${ayah.teksArab}",
+                  text: " ${ayah.teksArab} ",
                   style: GoogleFonts.lateef(
                     fontSize: 40,
                     fontWeight: FontWeight.w500,

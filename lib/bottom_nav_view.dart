@@ -35,7 +35,7 @@ class BottomNavView extends ConsumerWidget {
         appBar: AppBar(
           title: const Text(
             "Al-Quran Offline",
-            style: TextStyle(fontWeight: FontWeight.bold),
+            // style: TextStyle(fontWeight: FontWeight.bold),
           ),
           flexibleSpace: Container(
             decoration: const BoxDecoration(

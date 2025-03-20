@@ -46,8 +46,8 @@ class BannerAdNotifier extends StateNotifier<BannerAd?> {
   void _loadBannerAd() async {
     final BannerAd banner = BannerAd(
       size: AdSize.banner,
-      adUnitId:
-          'ca-app-pub-2393357737286916/9178085661', // ✅ Ganti dengan ID asli
+      // adUnitId: 'ca-app-pub-3940256099942544/6300978111', // ✅ ID Demo
+      adUnitId: 'ca-app-pub-2393357737286916/9178085661', // ID asli
       listener: BannerAdListener(
         onAdLoaded: (ad) => state = ad as BannerAd,
         onAdFailedToLoad: (ad, error) {

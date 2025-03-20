@@ -59,6 +59,18 @@ class _AboutPageState extends State<AboutPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Al-Quran Offline"),
+        centerTitle: true,
+        backgroundColor: Colors.teal,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.green, Colors.teal],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+        elevation: 0,
       ),
       body: Center(
         child: Padding(
@@ -66,55 +78,79 @@ class _AboutPageState extends State<AboutPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // const Icon(Icons.info_outline, size: 80, color: Colors.teal),
-              Image.asset(
-                'assets/logo/logo-alquran-offline.png',
-                width: 100,
-                height: 100,
-                fit: BoxFit.cover,
+              Card(
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        'assets/logo/logo-alquran-offline.png',
+                        width: 120,
+                        height: 120,
+                        fit: BoxFit.cover,
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        "Al-Qur'an Offline",
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.teal,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        "Membantu Anda membaca Al-Quran offline\nGratis tanpa koneksi internet.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      const SizedBox(height: 16),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.deepPurpleAccent.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.email,
+                                size: 16, color: Colors.deepPurpleAccent),
+                            SizedBox(width: 8),
+                            Text("miftahularif.dev@gmail.com",
+                                style: TextStyle(
+                                    color: Colors.deepPurpleAccent,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12)),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      const SizedBox(
+                        width: double.infinity,
+                        child: Text("Donasi via DANA: 0852-5088-7277",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12)),
+                      ),
+                      const SizedBox(height: 8),
+                    ],
+                  ),
+                ),
               ),
               const SizedBox(height: 16),
-              const Text(
-                "Al-Qur'an Offline",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                "Membantu Anda membaca Al-Quran offline \ngratis tanpa koneksi internet.",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14),
-              ),
-              const SizedBox(height: 8),
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.email, size: 16, color: Colors.deepPurpleAccent),
-                  SizedBox(width: 8),
-                  Text("miftahularif.dev@gmail.com",
-                      style: TextStyle(
-                          color: Colors.deepPurpleAccent,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12)),
-                ],
-              ),
-              const SizedBox(height: 8),
-              // Tombol Donasi DANA
-              Container(
-                width: double.infinity,
-                child: const Text("Donasi via DANA: 0852-5088-7277",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Colors.green,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12)),
-              ),
-
-              const SizedBox(height: 8),
               RichText(
                 textAlign: TextAlign.center,
                 text: const TextSpan(
                   style: TextStyle(fontSize: 10, color: Colors.grey),
-                  children: [TextSpan(text: "© 2025 Al-Qur-an Offline V1.1.3")],
+                  children: [TextSpan(text: "© 2025 Al-Qur'an Offline V1.1.3")],
                 ),
               ),
             ],
@@ -122,20 +158,5 @@ class _AboutPageState extends State<AboutPage> {
         ),
       ),
     );
-  }
-}
-
-// 🔹 Fungsi untuk mengirim email ke developer
-void _sendEmail() async {
-  final Uri emailUri = Uri(
-    scheme: 'mailto',
-    path: 'miftahularif.dev@gmail.com',
-    query: 'subject=Dukungan Aplikasi Al-Quran Offline',
-  );
-
-  if (await canLaunchUrl(emailUri)) {
-    await launchUrl(emailUri);
-  } else {
-    debugPrint("❌ Tidak dapat membuka email.");
   }
 }
