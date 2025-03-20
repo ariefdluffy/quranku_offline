@@ -12,9 +12,9 @@ class Surah {
   final String tempatTurun;
   final String arti;
   final String deskripsi;
-  final Map<String, String> audioFull; // Audio full dari beberapa qari
+  final Map<String, String> audioFull;
   final List<Ayah> ayat;
-  // final List<SurahAyatList> ayatlist;
+
   final SuratSelanjutnya? suratSelanjutnya;
   final SuratSebelumnya? suratSebelumnya;
 

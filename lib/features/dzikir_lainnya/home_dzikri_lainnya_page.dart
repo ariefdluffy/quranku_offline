@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class DzikirSholatPage extends StatelessWidget {
-  const DzikirSholatPage({super.key});
+class HomeDzikirLainnyaPage extends StatelessWidget {
+  const HomeDzikirLainnyaPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Dzikir Petang",
+        title: const Text("Dzikir Lainnya",
             style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.teal.shade700,
         foregroundColor: Colors.white,

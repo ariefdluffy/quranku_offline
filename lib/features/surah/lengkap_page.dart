@@ -14,13 +14,13 @@ class LengkapPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // ✅ Aktifkan layar tetap menyala setiap kali halaman ini dibuka
-    WakelockPlus.enable();
+    // // ✅ Aktifkan layar tetap menyala setiap kali halaman ini dibuka
+    // WakelockPlus.enable();
 
-    ref.listen(quranProvider, (previous, next) {
-      // ✅ Matikan layar tetap menyala saat keluar halaman
-      WakelockPlus.disable();
-    });
+    // ref.listen(quranProvider, (previous, next) {
+    //   // ✅ Matikan layar tetap menyala saat keluar halaman
+    //   WakelockPlus.disable();
+    // });
 
     final surahList = ref.watch(quranProvider);
     final currentPage = ref.watch(quranPaginationProvider);
@@ -63,18 +63,18 @@ class LengkapPage extends ConsumerWidget {
           appBar: orientation == Orientation.portrait
               ? AppBar(
                   title: Text(namaSurah),
-                  actions: [
-                    IconButton(
-                      icon: const Icon(Icons.bookmark, color: Colors.teal),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const BookmarkPage()),
-                        );
-                      },
-                    ),
-                  ],
+                  // actions: [
+                  //   IconButton(
+                  //     icon: const Icon(Icons.bookmark, color: Colors.teal),
+                  //     onPressed: () {
+                  //       Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //             builder: (context) => const BookmarkPage()),
+                  //       );
+                  //     },
+                  //   ),
+                  // ],
                 )
               : null, // Nama surah di atas halaman
           body: Column(

@@ -1,16 +1,12 @@
 import 'dart:io';
-
 import 'package:audioplayers/audioplayers.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_background_service/flutter_background_service.dart';
-// import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:quranku_offline/core/providers/audio_storage_provider.dart';
-import 'package:quranku_offline/core/providers/download_status_provider.dart';
 import 'package:quranku_offline/core/providers/quran_provider.dart';
 import 'package:http/http.dart' as http;
 // import 'package:quranku_offline/core/services/background_service.dart';
@@ -42,10 +38,6 @@ class AudioFullPlayerNotifier extends StateNotifier<int> {
       }
     });
   }
-
-  // void startBackgroundService() {
-  //   initializeService();
-  // }
 
   // ✅ Simpan context dari UI agar bisa digunakan di fungsi lain
   void setContext(BuildContext context) {
@@ -118,8 +110,7 @@ class AudioFullPlayerNotifier extends StateNotifier<int> {
   }
 
   Future<void> playSurah(BuildContext context, int index) async {
-    ref.read(isLoadingAudioProvider.notifier).state =
-        true; // ✅ Aktifkan loading
+    ref.read(isLoadingAudioProvider.notifier).state = true;
 
     final surahList = ref.read(quranProvider);
     if (index >= 0 && index < surahList.length) {
@@ -130,8 +121,10 @@ class AudioFullPlayerNotifier extends StateNotifier<int> {
       if (audioUrl != null) {
         // await _audioPlayer.stop();
         try {
+          // ✅ Aktifkan Background Execution
           final File? file =
               await _downloadMp3(context, surah.nomor.toString(), audioUrl);
+
           if (file != null) {
             await _audioPlayer.play(DeviceFileSource(file.path));
 
@@ -145,43 +138,42 @@ class AudioFullPlayerNotifier extends StateNotifier<int> {
           }
         } catch (e) {
           ref.read(audioFullErrorProvider.notifier).state =
-              "Gagal memutar audio: $e"; // ✅ Simpan pesan error
+              "Gagal memutar audio: $e";
           Logger().e("Error saat memutar audio: $e");
         }
+      } else {
+        // ref.read(isPlayingAudioProvider.notifier).state = false;
+        ref.read(isLoadingAudioProvider.notifier).state = false;
       }
     }
   }
 
   Future<File?> _downloadMp3(
       BuildContext context, String surahNumber, String audioUrl) async {
-    final connectivity = await Connectivity().checkConnectivity();
-    // ✅ Update total ukuran file setelah download selesai
+    // final connectivity = await Connectivity().checkConnectivity();
+
     ref.read(downloadedSizeProvider.notifier).updateSize();
 
-    if (connectivity.contains(ConnectivityResult.none)) {
-      _showSnackbar(context, "❌ Tidak ada koneksi internet!", isError: true);
-      return null;
-    }
+    // if (connectivity.contains(ConnectivityResult.none)) {
+    //   _showSnackbar(context, "❌ Tidak ada koneksi internet!", isError: true);
+    //   return null;
+    // }
 
     final directory = await getApplicationDocumentsDirectory();
     final filePath = "${directory.path}/surah_$surahNumber.mp3";
     final file = File(filePath);
 
     if (await file.exists()) {
-      _showSnackbar(context, "Audio langsung dimainkan.");
+      // _showSnackbar(context, "Audio diputar.");
       return file;
     }
-
-    // _showSnackbar(context, "Mengunduh audio di latar belakang...");
 
     int retryCount = 0;
     while (retryCount < 3) {
       try {
         Logger().i("⬇ Mengunduh audio...");
-        _showSnackbar(context, "Mengunduh audio..");
-        final response = await http.get(
-          Uri.parse(audioUrl),
-        );
+        final response = await http.get(Uri.parse(audioUrl));
+        _showSnackbar(context, "Mengunduh audio di latar belakang...");
 
         if (response.statusCode == 200) {
           await file.writeAsBytes(response.bodyBytes);
@@ -197,12 +189,15 @@ class AudioFullPlayerNotifier extends StateNotifier<int> {
             _showSnackbar(context,
                 "❌ Gagal mengunduh audio setelah 3 kali mencoba, cek koneksi internet!",
                 isError: true);
+            ref.read(isLoadingAudioProvider.notifier).state = false;
           }
         }
       } catch (e) {
         retryCount++;
         if (retryCount == 3) {
           _showSnackbar(context, "❌ Error saat mengunduh: $e", isError: true);
+          ref.read(isLoadingAudioProvider.notifier).state = false;
+          Logger().e("Error saat mengunduh audio: $e");
         }
       }
     }

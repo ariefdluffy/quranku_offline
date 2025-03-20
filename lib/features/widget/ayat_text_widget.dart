@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quranku_offline/core/models/ayah_model.dart';
-import 'package:quranku_offline/core/models/surah_ayat_list.dart';
 import 'package:quranku_offline/core/models/surah_model.dart';
 
 class AyahTextWidget extends StatelessWidget {

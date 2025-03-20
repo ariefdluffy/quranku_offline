@@ -9,7 +9,7 @@ import 'package:quranku_offline/core/providers/ad_provider.dart';
 import 'package:quranku_offline/core/providers/audio_full_provider.dart';
 import 'package:quranku_offline/core/providers/audio_storage_provider.dart';
 import 'package:quranku_offline/core/providers/connectivity_provider.dart';
-import 'package:quranku_offline/core/providers/download_status_provider.dart';
+
 import 'package:quranku_offline/core/providers/quran_provider.dart';
 import 'package:quranku_offline/features/about_page.dart';
 import 'package:quranku_offline/features/utils/device_info_helper.dart';
@@ -31,9 +31,6 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
     telegramHelper: TelegramHelper(
       botToken: dotenv.env['BOT_TOKEN'] ?? '',
       chatId: dotenv.env['CHAT_ID'] ?? '',
-      // botToken:
-      //     '7678341666:AAH_6GTin6WCzxx0zOoySoeZfz6b8FgRfFU', // Ganti dengan token bot Anda
-      // chatId: '111519789', // Ganti dengan chat ID Anda
     ),
   );
   bool isLoading = true;
@@ -129,6 +126,7 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
           children: [
             const SizedBox(height: 40),
             // 🔹 Tombol Pilih Surah
+
             ElevatedButton.icon(
               icon: const Icon(Icons.search, color: Colors.white),
               label: const Text("Cari Surah"),
@@ -198,16 +196,16 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
                         ),
                         onPressed: () {
                           // 🔹 Cek koneksi sebelum memutar audio
-                          if (connectivity.value == ConnectivityResult.none) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Tidak ada koneksi internet!"),
-                                backgroundColor: Colors.red,
-                                duration: Duration(seconds: 3),
-                              ),
-                            );
-                            return; // 🚫 Jangan lanjutkan pemutaran jika tidak ada internet
-                          }
+                          // if (connectivity.value == ConnectivityResult.none) {
+                          //   ScaffoldMessenger.of(context).showSnackBar(
+                          //     const SnackBar(
+                          //       content: Text("Tidak ada koneksi internet!"),
+                          //       backgroundColor: Colors.red,
+                          //       duration: Duration(seconds: 3),
+                          //     ),
+                          //   );
+                          //   return; // 🚫 Jangan lanjutkan pemutaran jika tidak ada internet
+                          // }
 
                           if (isPlayingAudio) {
                             ref
@@ -250,16 +248,6 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
             ),
             Column(
               children: [
-                // if (downloadProgress > 0 && downloadProgress < 100)
-                //   Text(
-                //     "Mengunduh: ${downloadProgress.toStringAsFixed(1)}%",
-                //     style: const TextStyle(
-                //       fontSize: 12,
-                //       fontWeight: FontWeight.bold,
-                //       color: Colors.teal,
-                //     ),
-                //   ),
-                // const SizedBox(height: 10),
                 Text(
                   "Total Ukuran File: $downloadedSize",
                   style: const TextStyle(

@@ -6,7 +6,7 @@ import 'package:quranku_offline/core/providers/quran_provider.dart';
 import 'package:quranku_offline/features/dzikir_pagi/dzikir_pagi_page.dart';
 import 'package:quranku_offline/features/bookmark_page.dart';
 import 'package:quranku_offline/features/dzikir_petang/dzikir_petang_page.dart';
-import 'package:quranku_offline/features/dzikir_sholat/dzikri_sholat_page.dart';
+import 'package:quranku_offline/features/dzikir_lainnya/home_dzikri_lainnya_page.dart';
 import 'package:quranku_offline/features/widget/shimmer_loading.dart';
 import 'package:quranku_offline/features/widget/surah_card.dart';
 
@@ -71,13 +71,13 @@ class HomePage extends ConsumerWidget {
                   ),
                   _buildMenuCard(
                     icon: Icons.wysiwyg,
-                    label: "Dzikir Sholat",
+                    label: "Dzikir Lainnya",
                     color: Colors.orange,
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const DzikirSholatPage(),
+                          builder: (context) => const HomeDzikirLainnyaPage(),
                         ),
                       );
                     },
