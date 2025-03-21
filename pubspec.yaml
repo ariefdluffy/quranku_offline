@@ -40,6 +40,7 @@ flutter:
   assets:
     - assets/dzikir_pagi.json
     - assets/dzikir_petang.json
+    - assets/dzikir_setelah_sholat.json
     - assets/surah/
     - assets/logo/
     - .env

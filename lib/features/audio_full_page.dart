@@ -65,214 +65,224 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Surah Information Card
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              elevation: 5,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Text(
-                      "QS. ${currentSurah.namaLatin}: ${currentSurah.nomor}",
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.teal,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Surah Information Card
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                elevation: 5,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      Text(
+                        "QS. ${currentSurah.namaLatin}: ${currentSurah.nomor}",
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.teal,
+                        ),
                       ),
-                    ),
-                    Text(
-                      "${currentSurah.jumlahAyat} Ayat",
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.black54,
+                      Text(
+                        "${currentSurah.jumlahAyat} Ayat",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.black54,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      currentSurah.nama,
-                      style: GoogleFonts.amiri(
-                        fontSize: 42,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                      const SizedBox(height: 20),
+                      Text(
+                        currentSurah.nama,
+                        style: GoogleFonts.amiri(
+                          fontSize: 42,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            // Audio Controls
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              elevation: 5,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.skip_previous,
-                              size: 40, color: Colors.teal),
-                          onPressed: () => ref
-                              .read(audioFullPlayerProvider.notifier)
-                              .previousSurah(context),
-                        ),
-                        const SizedBox(width: 20),
-                        isLoadingAudio
-                            ? const CircularProgressIndicator(
-                                color: Colors.teal)
-                            : IconButton(
-                                icon: Icon(
-                                  isPlayingAudio
-                                      ? Icons.pause_circle_filled
-                                      : Icons.play_circle_fill,
-                                  size: 60,
-                                  color: Colors.teal,
-                                ),
-                                onPressed: () {
-                                  if (isPlayingAudio) {
-                                    ref
-                                        .read(audioFullPlayerProvider.notifier)
-                                        .pauseAudio();
-                                  } else {
-                                    ref
-                                        .read(audioFullPlayerProvider.notifier)
-                                        .playSurah(context, currentSurahIndex);
-                                  }
-                                },
-                              ),
-                        const SizedBox(width: 20),
-                        IconButton(
-                          icon: const Icon(Icons.skip_next,
-                              size: 40, color: Colors.teal),
-                          onPressed: () => ref
-                              .read(audioFullPlayerProvider.notifier)
-                              .nextSurah(context),
-                        ),
-                      ],
-                    ),
-                    const Divider(
-                      color: Colors.teal,
-                      thickness: 1,
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Stop Button
-                        ElevatedButton.icon(
-                          icon: const Icon(Icons.stop_circle_outlined,
-                              color: Colors.white, size: 20),
-                          label: const Text("Stop"),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.redAccent,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 12, horizontal: 20),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
+              // Audio Controls
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                elevation: 5,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.skip_previous,
+                                size: 40, color: Colors.teal),
+                            onPressed: () => ref
+                                .read(audioFullPlayerProvider.notifier)
+                                .previousSurah(context),
                           ),
-                          onPressed: () => ref
-                              .read(audioFullPlayerProvider.notifier)
-                              .stopAudio(),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                  children: [
-                    Text(
-                      "Total Ukuran File: $downloadedSize",
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.teal,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    ElevatedButton.icon(
-                      icon: const Icon(Icons.delete, color: Colors.white),
-                      label: const Text("Hapus semua surah"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.redAccent,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 20),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
-                      onPressed: () async {
-                        bool? confirmDelete = await showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text("Hapus Semua File?"),
-                              content: const Text(
-                                  "Apakah Anda yakin ingin menghapus semua file surah yang telah diunduh?"),
-                              actions: [
-                                TextButton(
-                                  onPressed: () =>
-                                      Navigator.pop(context, false),
-                                  child: const Text("Batal"),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () => Navigator.pop(context, true),
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.redAccent),
-                                  child: const Text(
-                                    "Hapus",
-                                    style: TextStyle(color: Colors.white),
+                          const SizedBox(width: 20),
+                          isLoadingAudio
+                              ? const CircularProgressIndicator(
+                                  color: Colors.teal)
+                              : IconButton(
+                                  icon: Icon(
+                                    isPlayingAudio
+                                        ? Icons.pause_circle_filled
+                                        : Icons.play_circle_fill,
+                                    size: 60,
+                                    color: Colors.teal,
                                   ),
+                                  onPressed: () {
+                                    if (isPlayingAudio) {
+                                      ref
+                                          .read(
+                                              audioFullPlayerProvider.notifier)
+                                          .pauseAudio();
+                                    } else {
+                                      ref
+                                          .read(
+                                              audioFullPlayerProvider.notifier)
+                                          .playSurah(
+                                              context, currentSurahIndex);
+                                    }
+                                  },
                                 ),
-                              ],
-                            );
-                          },
-                        );
-
-                        if (confirmDelete == true) {
-                          await deleteAllSurahFiles(context, ref);
-                        }
-                      },
-                    ),
-                  ],
+                          const SizedBox(width: 20),
+                          IconButton(
+                            icon: const Icon(Icons.skip_next,
+                                size: 40, color: Colors.teal),
+                            onPressed: () => ref
+                                .read(audioFullPlayerProvider.notifier)
+                                .nextSurah(context),
+                          ),
+                        ],
+                      ),
+                      const Divider(
+                        color: Colors.teal,
+                        thickness: 1,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Stop Button
+                          ElevatedButton.icon(
+                            icon: const Icon(Icons.stop_circle_outlined,
+                                color: Colors.white, size: 20),
+                            label: const Text("Stop"),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.redAccent,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 12, horizontal: 20),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                            ),
+                            onPressed: () => ref
+                                .read(audioFullPlayerProvider.notifier)
+                                .stopAudio(),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
                 ),
-              ],
-            ),
-
-            const SizedBox(height: 40),
-            // Ad Banner
-            if (bannerAd != null && bannerAd.responseInfo != null)
-              Container(
-                width: bannerAd.size.width.toDouble(),
-                height: bannerAd.size.height.toDouble(),
-                alignment: Alignment.center,
-                child: AdWidget(ad: bannerAd),
               ),
-          ],
+
+              const SizedBox(height: 20),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Column(
+                    children: [
+                      Text(
+                        "Total Ukuran File: $downloadedSize",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.teal,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      ElevatedButton.icon(
+                        icon: const Icon(
+                          Icons.delete,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                        label: const Text("Hapus semua surah"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.redAccent,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 20),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                        ),
+                        onPressed: () async {
+                          bool? confirmDelete = await showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text("Hapus Semua File?"),
+                                content: const Text(
+                                    "Apakah Anda yakin ingin menghapus semua file surah yang telah diunduh?"),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, false),
+                                    child: const Text("Batal"),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, true),
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.redAccent),
+                                    child: const Text(
+                                      "Hapus",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+
+                          if (confirmDelete == true) {
+                            await deleteAllSurahFiles(context, ref);
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 40),
+              // Ad Banner
+              if (bannerAd != null && bannerAd.responseInfo != null)
+                Container(
+                  width: bannerAd.size.width.toDouble(),
+                  height: bannerAd.size.height.toDouble(),
+                  alignment: Alignment.center,
+                  child: AdWidget(ad: bannerAd),
+                ),
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(

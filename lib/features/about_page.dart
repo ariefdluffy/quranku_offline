@@ -131,12 +131,19 @@ class _AboutPageState extends State<AboutPage> {
                         ),
                       ),
                       const SizedBox(height: 16),
+                      Image.asset(
+                        'assets/logo/logo_ewallet-png.png',
+                        width: 130,
+                        // height: 120,
+                        fit: BoxFit.cover,
+                      ),
+                      const SizedBox(height: 8),
                       const SizedBox(
                         width: double.infinity,
-                        child: Text("Donasi via DANA: 0852-5088-7277",
+                        child: Text("0852-5088-7277",
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                color: Colors.green,
+                                color: Colors.black,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 12)),
                       ),

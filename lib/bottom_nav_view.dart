@@ -4,10 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quranku_offline/core/providers/ad_provider.dart';
 import 'package:quranku_offline/core/providers/navigation_provider.dart';
 import 'package:quranku_offline/features/audio_full_page.dart';
-import 'package:quranku_offline/features/audio_quran/audio_page.dart';
+
 import 'package:quranku_offline/features/home/home_page.dart';
 import 'package:quranku_offline/features/surah/lengkap_page.dart';
-import 'package:quranku_offline/features/surah/per_surah_page.dart';
 
 class BottomNavView extends ConsumerWidget {
   const BottomNavView({super.key});

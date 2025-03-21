@@ -1,137 +1,110 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:quranku_offline/features/dzikir_lainnya/dzikir_setelah_sholat.dart';
 
-class HomeDzikirLainnyaPage extends StatelessWidget {
+class HomeDzikirLainnyaPage extends StatefulWidget {
   const HomeDzikirLainnyaPage({super.key});
+
+  @override
+  State<HomeDzikirLainnyaPage> createState() => _HomeDzikirLainnyaPageState();
+}
+
+class _HomeDzikirLainnyaPageState extends State<HomeDzikirLainnyaPage>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+    _scaleAnimation = Tween<double>(begin: 0.7, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
+    );
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Dzikir Lainnya",
-            style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text("Dzikir & Lainnya",
+            style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.teal.shade700,
         foregroundColor: Colors.white,
         centerTitle: true,
+        elevation: 4,
       ),
-      backgroundColor: Colors.teal.shade50,
-      extendBodyBehindAppBar: true,
       body: Container(
-        decoration: BoxDecoration(
-          color: Colors.teal.shade700, // Warna latar belakang container
-          borderRadius: BorderRadius.circular(20), // Sudut melengkung
-          border: Border.all(
-            color: Colors.white, // Warna border putih
-            width: 2, // Ketebalan border
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.teal, Colors.tealAccent],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.3), // Bayangan
-              blurRadius: 10,
-              offset: const Offset(0, 5),
-            ),
-          ],
         ),
-        child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ScaleTransition(
+            scale: _scaleAnimation,
+            child: GridView.count(
+              crossAxisCount: 2,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              children: [
+                _buildMenuCard(
+                    "Dzikir setelah Sholat", Icons.mosque, Colors.teal, () {
+                  Navigator.push(
+                    context,
+                    (MaterialPageRoute(
+                      builder: (context) {
+                        return const DzikirSetelahSholatPage();
+                      },
+                    )),
+                  );
+                }),
+                _buildMenuCard(
+                    "Tafsir Quran", Icons.menu_book, Colors.orange, () {}),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMenuCard(
+      String title, IconData icon, Color color, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 6,
+        shadowColor: color.withOpacity(0.5),
+        color: color,
+        child: Container(
+          padding: const EdgeInsets.all(12),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Animated Logo
-              AnimatedContainer(
-                duration: const Duration(seconds: 2),
-                curve: Curves.easeInOut,
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.rocket_launch,
-                  size: 60,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 30),
-              // Teks "Coming Soon" dengan animasi
-              TweenAnimationBuilder(
-                tween: Tween<double>(begin: 0, end: 1),
-                duration: const Duration(seconds: 2),
-                builder: (context, double value, child) {
-                  return Opacity(
-                    opacity: value,
-                    child: Transform.translate(
-                      offset: Offset(0, (1 - value) * 20),
-                      child: child,
-                    ),
-                  );
-                },
-                child: const Text(
-                  'Coming Soon',
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    letterSpacing: 2,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              // Teks deskripsi
-              const Text(
-                'We are working hard to bring you something amazing!',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white70,
-                ),
+              Icon(icon, size: 40, color: Colors.white),
+              const SizedBox(height: 10),
+              Text(
+                title,
                 textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 40),
-              // Tombol dengan efek hover
-              MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  width: 200,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Colors.blueAccent, Colors.purpleAccent],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(25),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        blurRadius: 10,
-                        offset: const Offset(0, 5),
-                      ),
-                    ],
-                  ),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(25),
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('We will notify you soon!'),
-                            backgroundColor: Colors.green,
-                          ),
-                        );
-                      },
-                      child: const Center(
-                        child: Text(
-                          'Notify Me',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                style: GoogleFonts.poppins(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
