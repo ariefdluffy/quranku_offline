@@ -1,11 +1,9 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:logger/logger.dart';
 import 'package:quranku_offline/ads/interstitial_ad_page.dart';
 import 'package:quranku_offline/features/utils/device_info_helper.dart';
 import 'package:quranku_offline/features/utils/tele_helper.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
@@ -145,7 +143,7 @@ class _AboutPageState extends State<AboutPage> {
                             style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 12)),
+                                fontSize: 10)),
                       ),
                       const SizedBox(height: 8),
                     ],
@@ -157,7 +155,7 @@ class _AboutPageState extends State<AboutPage> {
                 textAlign: TextAlign.center,
                 text: const TextSpan(
                   style: TextStyle(fontSize: 10, color: Colors.grey),
-                  children: [TextSpan(text: "© 2025 Al-Qur'an Offline V1.1.3")],
+                  children: [TextSpan(text: "© 2025 Al-Qur'an Offline V1.1.4")],
                 ),
               ),
             ],

@@ -39,7 +39,7 @@ class AudioPlayerWidget extends ConsumerWidget {
                           ? Icons.pause_circle_filled
                           : Icons.play_circle_fill,
                       color: Colors.teal,
-                      size: 50,
+                      size: 35,
                     ),
                     onPressed: () {
                       if (isPlaying) {
@@ -59,7 +59,7 @@ class AudioPlayerWidget extends ConsumerWidget {
               icon: const Icon(
                 Icons.stop_circle_outlined,
                 color: Colors.redAccent,
-                size: 50,
+                size: 35,
               ),
               onPressed: () {
                 audioPlayer.stopAudio(ref);

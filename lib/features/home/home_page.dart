@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:quranku_offline/core/models/surah_model.dart';
 import 'package:quranku_offline/core/providers/ad_provider.dart';
 import 'package:quranku_offline/core/providers/quran_provider.dart';
 import 'package:quranku_offline/features/dzikir_pagi/dzikir_pagi_page.dart';
 import 'package:quranku_offline/features/bookmark_page.dart';
 import 'package:quranku_offline/features/dzikir_petang/dzikir_petang_page.dart';
 import 'package:quranku_offline/features/dzikir_lainnya/home_dzikri_lainnya_page.dart';
+import 'package:quranku_offline/features/home/search/search_dialog.dart';
+import 'package:quranku_offline/features/surah/surah_page.dart';
+import 'package:quranku_offline/features/surah/surah_page_new.dart';
 import 'package:quranku_offline/features/widget/shimmer_loading.dart';
 import 'package:quranku_offline/features/widget/surah_card.dart';
 
@@ -26,7 +30,7 @@ class HomePage extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(
                 horizontal: 16, vertical: 10), // Tambahkan padding biar rapi
             child: const Text(
-              "Dzikir Pilihan",
+              "Menu Utama",
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -131,6 +135,158 @@ class HomePage extends ConsumerWidget {
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.teal,
+        child: const Icon(Icons.search, color: Colors.white),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) => const SearchDialog(), // ✅ Hapus `const`
+          );
+        },
+        // onPressed: () {
+        //   _showSearchDialog(context, surahList);
+        // },
+      ),
+    );
+  }
+
+  void _showSearchDialog(BuildContext context, List<Surah> surahList) {
+    final TextEditingController surahController = TextEditingController();
+    final TextEditingController ayahController = TextEditingController();
+    int? selectedSurahIndex;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Cari Surah & Ayat"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 🔹 Input Nama Surah (AutoComplete)
+              Autocomplete<Surah>(
+                optionsBuilder: (textEditingValue) {
+                  if (textEditingValue.text.isEmpty) {
+                    return const Iterable<Surah>.empty();
+                  }
+                  return surahList.where((surah) => surah.namaLatin
+                      .toLowerCase()
+                      .contains(textEditingValue.text.toLowerCase()));
+                },
+                displayStringForOption: (Surah surah) => surah.namaLatin,
+                fieldViewBuilder:
+                    (context, controller, focusNode, onFieldSubmitted) {
+                  surahController.text = controller.text;
+                  return TextField(
+                    controller: controller,
+                    focusNode: focusNode,
+                    decoration: InputDecoration(
+                      labelText: "Nama Surah",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      suffixIcon: surahController.text.isNotEmpty
+                          ? IconButton(
+                              icon: const Icon(Icons.clear),
+                              onPressed: () {
+                                controller.clear();
+                                surahController.clear();
+                              },
+                            )
+                          : null,
+                    ),
+                    onChanged: (value) => onFieldSubmitted(),
+                  );
+                },
+                onSelected: (Surah surah) {
+                  selectedSurahIndex = surah.nomor - 1;
+                },
+              ),
+              const SizedBox(height: 10),
+
+              // 🔹 Input Nomor Ayat
+              TextField(
+                controller: ayahController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: "Nomor Ayat",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  suffixIcon: ayahController.text.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: () {
+                            ayahController.clear();
+                          },
+                        )
+                      : null,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Batal"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (selectedSurahIndex == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("❌ Pilih Surah terlebih dahulu!"),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return;
+                }
+
+                int? ayahNumber = int.tryParse(ayahController.text);
+                if (ayahNumber != null) {
+                  final surah = surahList[selectedSurahIndex!];
+                  final ayahExists =
+                      surah.ayat.any((ayah) => ayah.nomorAyat == ayahNumber);
+
+                  if (!ayahExists) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Ayat tidak ditemukan dalam surah ini!"),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    return;
+                  }
+
+                  // ✅ Navigasi ke halaman Surah dan Scroll ke Ayat
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SurahPageNew(
+                        surah: surah,
+                        targetAyah: ayahNumber,
+                      ),
+                    ),
+                  );
+                } else {
+                  // ✅ Jika hanya Surah yang dipilih, navigasikan ke halaman Surah
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          SurahPage(surah: surahList[selectedSurahIndex!]),
+                    ),
+                  );
+                }
+              },
+              child: const Text("Cari"),
+            ),
+          ],
+        );
+      },
     );
   }
 

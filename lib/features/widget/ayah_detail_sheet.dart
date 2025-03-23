@@ -22,7 +22,7 @@ class AyahDetailSheet extends ConsumerWidget {
     return SafeArea(
       child: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -55,7 +55,7 @@ class AyahDetailSheet extends ConsumerWidget {
               ),
 
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(12.0),
                 child: RichText(
                   textAlign: TextAlign.justify,
                   textDirection: TextDirection.rtl,
@@ -77,7 +77,7 @@ class AyahDetailSheet extends ConsumerWidget {
                       WidgetSpan(
                         alignment: PlaceholderAlignment.middle,
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          padding: const EdgeInsets.all(12),
                           child: Container(
                             width: 28,
                             height: 28,
@@ -105,22 +105,28 @@ class AyahDetailSheet extends ConsumerWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 5),
 
-              Text(
-                ayah.teksLatin,
-                textAlign: TextAlign.right,
-                style: const TextStyle(
-                    fontSize: 16,
-                    fontStyle: FontStyle.italic,
-                    color: Colors.grey),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  ayah.teksLatin,
+                  textAlign: TextAlign.justify,
+                  style: const TextStyle(
+                      fontSize: 14,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.grey),
+                ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 5),
 
-              Text(
-                ayah.teksIndonesia,
-                textAlign: TextAlign.justify,
-                style: const TextStyle(fontSize: 16, color: Colors.black87),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  ayah.teksIndonesia,
+                  textAlign: TextAlign.justify,
+                  style: const TextStyle(fontSize: 14, color: Colors.black87),
+                ),
               ),
               const Divider(thickness: 1, color: Colors.teal),
 

@@ -22,15 +22,37 @@ class SurahPage extends ConsumerStatefulWidget {
 
 class _SurahPageState extends ConsumerState<SurahPage> {
   late ScrollController _scrollController;
+  bool isLoading = true;
+  List<Ayah> filteredAyah = [];
+  List<GlobalKey> _ayahKeys = [];
+
+  void scrollToAyah(int nomorAyat) {
+    final index =
+        widget.surah.ayat.indexWhere((ayah) => ayah.nomorAyat == nomorAyat);
+
+    if (index != -1) {
+      // 🔹 Dapatkan posisi widget berdasarkan GlobalKey
+      final key = _ayahKeys[index];
+      final context = key.currentContext;
+
+      if (context != null) {
+        Scrollable.ensureVisible(
+          context,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+          alignment: 0.1, // 🔹 Atur posisi agar lebih ke tengah layar
+        );
+      }
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Panggil fungsi yang memodifikasi provider di sini
-      _loadAyat();
-    });
-    // _loadAyat();
+
+    _ayahKeys = List.generate(widget.surah.ayat.length, (_) => GlobalKey());
+
+    _loadAyat();
     _scrollController = ref.read(scrollControllerProvider);
     // ✅ Perbarui visibilitas FAB saat halaman dimuat pertama kali
     Future.microtask(
@@ -43,24 +65,6 @@ class _SurahPageState extends ConsumerState<SurahPage> {
       },
     );
 
-    void _scrollToAyah(int nomorAyat) {
-      final index =
-          widget.surah.ayat.indexWhere((ayah) => ayah.nomorAyat == nomorAyat);
-      if (index != -1) {
-        _scrollController.animateTo(
-          index * 100.0, // 🔹 Scroll ke posisi (100 pixel per ayat)
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-        );
-      }
-    }
-
-    // 🔹 Tunggu hingga halaman selesai build sebelum scroll ke ayat
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.targetAyah != null) {
-        _scrollToAyah(widget.targetAyah!);
-      }
-    });
     // ✅ Tambahkan listener untuk mendeteksi perubahan scroll
     _scrollController.addListener(_onScroll);
   }
@@ -73,39 +77,34 @@ class _SurahPageState extends ConsumerState<SurahPage> {
     }
   }
 
-  void _updateFab() {
-    if (mounted) {
-      ref
-          .read(fabVisibilityProvider.notifier)
-          .updateVisibility(_scrollController);
-      ref.read(fabIconProvider.notifier).updateIcon(_scrollController);
-    }
-  }
-
   @override
   void dispose() {
-    _scrollController.removeListener(_updateFab);
     super.dispose();
   }
 
   Future<void> _loadAyat() async {
-    ref.read(isLoadingProvider.notifier).state = true; // ✅ Set loading ke true
+    await Future.delayed(
+        const Duration(milliseconds: 300)); // 🔹 Simulasi loading ayat
 
-    await Future.delayed(const Duration(seconds: 2)); // ✅ Simulasi delay
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
 
-    ref.read(isLoadingProvider.notifier).state =
-        false; // ✅ Set loading ke false setelah data dimuat
+      // ✅ Tunggu sampai widget sudah dirender sebelum scroll ke ayat tertentu
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (widget.targetAyah != null) {
+          scrollToAyah(widget.targetAyah!);
+        }
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     // final bookmarkList = ref.watch(bookmarkProvider);
-    final scrollController = ref.watch(scrollControllerProvider);
-    final isFabVisible =
-        ref.watch(fabVisibilityProvider); // ✅ Cek apakah FAB perlu ditampilkan
 
     final ayatAsyncValue = ref.watch(futureSurahProvider(widget.surah));
-    const isLoading = false;
 
     return Scaffold(
       appBar: AppBar(
@@ -129,24 +128,22 @@ class _SurahPageState extends ConsumerState<SurahPage> {
         ],
       ),
       body: ayatAsyncValue.when(
-        loading: () => const Center(
-          child: ShimmerLoading(
-            itemCount: 8,
-          ), // ✅ Loading indikator
-        ),
-        error: (error, stackTrace) => Center(
-          child: Text("Error: $error"), // ✅ Tampilkan error jika gagal load
-        ),
+        loading: () => const Center(child: ShimmerLoading(itemCount: 8)),
+        error: (error, stackTrace) => Center(child: Text("Error: $error")),
         data: (ayatList) => SingleChildScrollView(
+          controller: _scrollController,
           padding: const EdgeInsets.all(12.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
-            children: ayatList.map((ayah) {
+            children: widget.surah.ayat.asMap().entries.map((entry) {
+              final index = entry.key;
+              final ayah = entry.value;
               final isBookmarked = ref.watch(bookmarkProvider).contains(ayah);
 
               return GestureDetector(
                 onTap: () => showAyahDetail(context, ayah),
                 child: Container(
+                  key: _ayahKeys[index],
                   margin: const EdgeInsets.only(bottom: 8),
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
@@ -250,39 +247,13 @@ class _SurahPageState extends ConsumerState<SurahPage> {
         ),
         // 🔹 Tambahkan Container Audio di Bawah
       ),
+
       // 🔹 Gunakan Widget AudioPlayer di Bawah
       bottomNavigationBar: SafeArea(
         child: AudioPlayerWidget(
           audioUrl: widget.surah.audioFull['04'], // Pilih Qari tertentu
         ),
       ),
-
-      // 🔹 Floating Action Button (FAB) hanya muncul jika bisa di-scroll
-      // floatingActionButton: isFabVisible
-      //     ? FloatingActionButton(
-      //         onPressed: () {
-      //           if (scrollController.hasClients) {
-      //             final isAtBottom = scrollController.position.pixels >=
-      //                 scrollController.position.maxScrollExtent - 50;
-      //             if (isAtBottom) {
-      //               ref.read(scrollControllerProvider.notifier).scrollToTop();
-      //             } else {
-      //               ref
-      //                   .read(scrollControllerProvider.notifier)
-      //                   .scrollToBottom();
-      //             }
-      //           }
-      //         },
-      //         backgroundColor: Colors.teal,
-      //         child: Icon(
-      //           scrollController.hasClients &&
-      //                   scrollController.position.pixels >=
-      //                       scrollController.position.maxScrollExtent - 50
-      //               ? Icons.arrow_upward
-      //               : Icons.arrow_downward,
-      //         ),
-      //       )
-      //     : null, // ✅ FAB disembunyikan jika konten hanya 1 layar
     );
   }
 }

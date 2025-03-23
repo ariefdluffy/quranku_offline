@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quranku_offline/features/dzikir_lainnya/dzikir_setelah_sholat.dart';
+import 'package:quranku_offline/features/dzikir_lainnya/tafsir/tafsir_page.dart';
 
 class HomeDzikirLainnyaPage extends StatefulWidget {
   const HomeDzikirLainnyaPage({super.key});
@@ -37,8 +38,7 @@ class _HomeDzikirLainnyaPageState extends State<HomeDzikirLainnyaPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Dzikir & Lainnya",
-            style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
+        title: Text("Dzikir & Lainnya", style: GoogleFonts.poppins()),
         backgroundColor: Colors.teal.shade700,
         foregroundColor: Colors.white,
         centerTitle: true,
@@ -65,15 +65,20 @@ class _HomeDzikirLainnyaPageState extends State<HomeDzikirLainnyaPage>
                     "Dzikir setelah Sholat", Icons.mosque, Colors.teal, () {
                   Navigator.push(
                     context,
-                    (MaterialPageRoute(
-                      builder: (context) {
-                        return const DzikirSetelahSholatPage();
-                      },
-                    )),
+                    (MaterialPageRoute(builder: (context) {
+                      return const DzikirSetelahSholatPage();
+                    })),
                   );
                 }),
-                _buildMenuCard(
-                    "Tafsir Quran", Icons.menu_book, Colors.orange, () {}),
+                _buildMenuCard("Tafsir Quran", Icons.menu_book, Colors.orange,
+                    () {
+                  Navigator.push(
+                    context,
+                    (MaterialPageRoute(builder: (context) {
+                      return const TafsirPage();
+                    })),
+                  );
+                }),
               ],
             ),
           ),

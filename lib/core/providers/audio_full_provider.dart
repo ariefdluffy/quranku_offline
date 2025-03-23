@@ -33,16 +33,17 @@ class AudioFullPlayerNotifier extends StateNotifier<int> {
     // startBackgroundService();
     _audioPlayer.onPlayerComplete.listen((event) {
       if (_context != null) {
+        Logger().i("✅ Audio selesai, lanjut ke surah berikutnya...");
         nextSurah(_context!);
       }
+      // nextSurah(_context!);
     });
   }
 
   // ✅ Simpan context dari UI agar bisa digunakan di fungsi lain
   void setContext(BuildContext context) {
     _context = context;
-    _initNotifications(
-        context); // ✅ Pastikan _initNotifications() punya context
+    _initNotifications(context);
   }
 
   // ✅ Inisialisasi Notifikasi
@@ -110,8 +111,8 @@ class AudioFullPlayerNotifier extends StateNotifier<int> {
 
   Future<void> playSurah(BuildContext context, int index) async {
     ref.read(isLoadingAudioProvider.notifier).state = true;
-
     final surahList = ref.read(quranProvider);
+
     if (index >= 0 && index < surahList.length) {
       state = index;
       final surah = surahList[index];
@@ -141,7 +142,7 @@ class AudioFullPlayerNotifier extends StateNotifier<int> {
           Logger().e("Error saat memutar audio: $e");
         }
       } else {
-        // ref.read(isPlayingAudioProvider.notifier).state = false;
+        ref.read(isPlayingAudioProvider.notifier).state = false;
         ref.read(isLoadingAudioProvider.notifier).state = false;
       }
     }
@@ -163,7 +164,7 @@ class AudioFullPlayerNotifier extends StateNotifier<int> {
     final file = File(filePath);
 
     if (await file.exists()) {
-      // _showSnackbar(context, "Audio diputar.");
+      _showSnackbar(context, "Audio diputar.");
       return file;
     }
 
@@ -239,8 +240,6 @@ class AudioFullPlayerNotifier extends StateNotifier<int> {
   Future<void> nextSurah(BuildContext context) async {
     final surahList = ref.read(quranProvider);
     if (state + 1 < surahList.length) {
-      // FlutterBackgroundService().invoke("next_surah");
-
       playSurah(context, state + 1);
     } else {
       ref.read(isPlayingAudioProvider.notifier).state = false;

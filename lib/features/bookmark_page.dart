@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quranku_offline/core/providers/quran_provider.dart';
 import 'package:quranku_offline/features/surah/surah_page.dart';
+import 'package:quranku_offline/features/surah/surah_page_new.dart';
 
 class BookmarkPage extends ConsumerWidget {
   const BookmarkPage({super.key});
@@ -117,7 +118,7 @@ class BookmarkPage extends ConsumerWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => SurahPage(
+                            builder: (context) => SurahPageNew(
                               surah: surah,
                               targetAyah: ayah.nomorAyat, // 🔹 Kirim nomor ayat
                             ),

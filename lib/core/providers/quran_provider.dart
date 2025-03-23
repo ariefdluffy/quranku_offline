@@ -1,21 +1,25 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:http/http.dart' as http;
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:quranku_offline/core/models/ayah_model.dart';
 import 'package:quranku_offline/core/services/quran_services.dart';
 import '../models/surah_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class QuranNotifier extends StateNotifier<List<Surah>> {
+  // final AudioPlayer _audioPlayer = AudioPlayer();
+  // BuildContext? _context;
   QuranNotifier() : super([]) {
     loadAllSurah();
+    // _audioPlayer.onPlayerComplete.listen((event) {
+    //   if (_context != null) {
+    //     Logger().i("✅ Audio selesai, lanjut ke surah berikutnya...");
+    //     // ref.read(isPlayingProvider.notifier).state = false;
+    //   }
+    // });
   }
 
   Future<void> loadAllSurah() async {
@@ -109,6 +113,7 @@ class BookmarkNotifier extends StateNotifier<List<Ayah>> {
   void addBookmark(Ayah ayah) {
     if (!state.contains(ayah)) {
       state = [...state, ayah]; // Tambah bookmark baru
+      Logger().i("Tambah bookmark: ${ayah.toJson()}");
       _saveBookmarks(); // Simpan ke SharedPreferences
     }
   }
@@ -214,6 +219,11 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayer> {
       // await state.stop();
       await state.play(UrlSource(url));
       ref.read(isPlayingProvider.notifier).state = true;
+
+      state.onPlayerComplete.listen((event) {
+        // Tambahkan aksi lain seperti auto-play next audio atau ubah UI
+        ref.read(isPlayingProvider.notifier).state = false;
+      });
     } on TimeoutException {
       ref.read(audioErrorProvider.notifier).state =
           "Koneksi timeout. Coba lagi.";
@@ -222,8 +232,8 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayer> {
           "Gagal memutar audio: $e"; // ✅ Simpan pesan error
       Logger().e("Error saat memutar audio: $e");
     } finally {
-      ref.read(isLoadingProvider.notifier).state =
-          false; // ✅ Matikan loading setelah selesai
+      ref.read(isLoadingProvider.notifier).state = false;
+      // ref.read(isPlayingProvider.notifier).state = false;
     }
   }
 
@@ -250,12 +260,12 @@ final audioPlayerProvider =
 final selectedSurahProvider =
     FutureProvider.family<Surah, int>((ref, nomorSurah) async {
   final surahList = ref.watch(quranProvider);
-  await Future.delayed(const Duration(milliseconds: 800)); // 🔹 Simulasi load
+  await Future.delayed(const Duration(milliseconds: 500)); // 🔹 Simulasi load
   return surahList.firstWhere((surah) => surah.nomor == nomorSurah);
 });
 
 final futureSurahProvider =
     FutureProvider.family<List<Ayah>, Surah>((ref, surah) async {
-  await Future.delayed(const Duration(seconds: 2)); // ✅ Simulasi delay loading
-  return surah.ayat; // ✅ Kembalikan daftar ayat
+  await Future.delayed(const Duration(milliseconds: 300));
+  return surah.ayat;
 });
