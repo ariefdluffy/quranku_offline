@@ -118,7 +118,7 @@ class BookmarkPage extends ConsumerWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => SurahPageNew(
+                            builder: (context) => SurahPage(
                               surah: surah,
                               targetAyah: ayah.nomorAyat, // 🔹 Kirim nomor ayat
                             ),

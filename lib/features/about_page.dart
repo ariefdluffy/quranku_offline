@@ -95,7 +95,7 @@ class _AboutPageState extends State<AboutPage> {
                       const Text(
                         "Al-Qur'an Offline",
                         style: TextStyle(
-                          fontSize: 24,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.teal,
                         ),
@@ -124,7 +124,7 @@ class _AboutPageState extends State<AboutPage> {
                                 style: TextStyle(
                                     color: Colors.deepPurpleAccent,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 12)),
+                                    fontSize: 10)),
                           ],
                         ),
                       ),

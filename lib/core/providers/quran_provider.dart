@@ -113,7 +113,7 @@ class BookmarkNotifier extends StateNotifier<List<Ayah>> {
   void addBookmark(Ayah ayah) {
     if (!state.contains(ayah)) {
       state = [...state, ayah]; // Tambah bookmark baru
-      Logger().i("Tambah bookmark: ${ayah.toJson()}");
+      Logger().i("Tambah bookmark: ${ayah.toJson()['nomorAyat']}");
       _saveBookmarks(); // Simpan ke SharedPreferences
     }
   }
@@ -121,6 +121,7 @@ class BookmarkNotifier extends StateNotifier<List<Ayah>> {
   void removeBookmark(Ayah ayah) {
     state = state.where((item) => item != ayah).toList(); // Hapus bookmark
     _saveBookmarks(); // Simpan perubahan ke SharedPreferences
+    Logger().i("Remove bookmark: ${ayah.toJson()['nomorAyat']}");
   }
 }
 
@@ -137,7 +138,7 @@ class ScrollControllerNotifier extends StateNotifier<ScrollController> {
   void scrollToTop() {
     state.animateTo(
       0,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 800),
       curve: Curves.easeOut,
     );
   }

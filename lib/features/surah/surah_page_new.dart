@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:logger/logger.dart';
 import 'package:quranku_offline/core/models/ayah_model.dart';
 import 'package:quranku_offline/core/models/surah_model.dart';
 import 'package:quranku_offline/core/providers/quran_provider.dart';
@@ -20,17 +21,19 @@ class SurahPageNew extends ConsumerStatefulWidget {
 class _SurahPageState extends ConsumerState<SurahPageNew> {
   late ScrollController _scrollController;
   List<Ayah> displayedAyat = [];
-  int batchSize = 10; // Jumlah ayat yang dimuat per batch
+  int batchSize = 25; // Jumlah ayat yang dimuat per batch
   bool isLoadingMore = false;
   List<GlobalKey> _ayahKeys = [];
   int lastIndexLoaded = 0;
   int currentIndex = 0;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
     // 🔹 Inisialisasi GlobalKey untuk setiap ayat
     _ayahKeys = List.generate(widget.surah.ayat.length, (_) => GlobalKey());
+    Logger().i("_ayahKeys: ${_ayahKeys}");
 
     _scrollController = ScrollController()..addListener(_onScroll);
 
@@ -54,22 +57,47 @@ class _SurahPageState extends ConsumerState<SurahPageNew> {
   }
 
   void _loadMoreAyat() {
-    if (currentIndex < widget.surah.ayat.length) {
+    if (currentIndex < widget.surah.ayat.length && !isLoadingMore) {
       setState(() {
         isLoadingMore = true;
       });
 
-      Future.delayed(const Duration(milliseconds: 500), () {
-        setState(() {
-          int nextIndex = currentIndex + batchSize;
-          if (nextIndex > widget.surah.ayat.length) {
-            nextIndex = widget.surah.ayat.length;
-          }
-          displayedAyat
-              .addAll(widget.surah.ayat.sublist(currentIndex, nextIndex));
-          currentIndex = nextIndex;
-          isLoadingMore = false;
-        });
+      Future.delayed(const Duration(milliseconds: 800), () {
+        if (mounted) {
+          setState(() {
+            int nextIndex = currentIndex + batchSize;
+
+            // ✅ Pastikan nextIndex tidak melebihi total ayat
+            if (nextIndex > widget.surah.ayat.length) {
+              nextIndex = widget.surah.ayat.length;
+            }
+
+            // ✅ Tambahkan hanya ayat yang belum ditampilkan
+            displayedAyat
+                .addAll(widget.surah.ayat.sublist(currentIndex, nextIndex));
+
+            currentIndex = nextIndex;
+            isLoadingMore = false;
+          });
+        }
+      });
+    }
+  }
+
+  Future<void> _loadAyat() async {
+    await Future.delayed(
+        const Duration(milliseconds: 800)); // 🔹 Simulasi loading ayat
+
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+
+      // ✅ Tunggu sampai widget sudah dirender sebelum scroll ke ayat tertentu
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (widget.targetAyah != null) {
+          _scrollToAyah(widget.targetAyah!);
+        }
       });
     }
   }
@@ -96,25 +124,63 @@ class _SurahPageState extends ConsumerState<SurahPageNew> {
     }
   }
 
-  void _scrollToAyah(int index) {
-    Future.delayed(const Duration(milliseconds: 300), () {
-      if (_ayahKeys[index].currentContext != null) {
+  void _scrollToAyah(int nomorAyat) {
+    final index =
+        widget.surah.ayat.indexWhere((ayah) => ayah.nomorAyat == nomorAyat);
+
+    if (index == -1) {
+      Logger().e("❌ Ayat tidak ditemukan!");
+      return;
+    }
+
+    // 🔹 Jika target belum termuat, panggil ensureAyahIsLoaded
+    if (index >= displayedAyat.length) {
+      Logger().w("⚠ Target ayat $index belum dimuat, muat lebih banyak...");
+      _ensureAyahIsLoaded(nomorAyat);
+      return;
+    }
+
+    // 🔹 Jika target sudah tersedia, lakukan scroll
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final key = _ayahKeys[index];
+      final context = key.currentContext;
+
+      Logger().e("🔍 Scrolling to ayat $index..., $context");
+
+      if (context != null) {
         Scrollable.ensureVisible(
-          _ayahKeys[index].currentContext!,
-          duration: const Duration(milliseconds: 600),
+          context,
+          duration: const Duration(milliseconds: 500),
           curve: Curves.easeInOut,
-          alignment: 0.2, // 🔹 Buat agar berada di tengah layar
+          alignment: 0.1,
         );
       } else {
-        // 🔹 Jika GlobalKey gagal, fallback ke scroll biasa
-        _scrollController.animateTo(
-          index * 150.0, // 🔹 Estimasi posisi scroll
-          duration: const Duration(milliseconds: 600),
-          curve: Curves.easeInOut,
-        );
+        Logger().e("❌ context masih null setelah render!");
       }
     });
   }
+
+  // void _scrollToAyah(int index) {
+  //   Future.delayed(const Duration(milliseconds: 300), () {
+  //     if (_ayahKeys[index].currentContext != null) {
+  //       Scrollable.ensureVisible(
+  //         _ayahKeys[index].currentContext!,
+  //         duration: const Duration(milliseconds: 600),
+  //         curve: Curves.easeInOut,
+  //         alignment: 0.2, // 🔹 Buat agar berada di tengah layar
+  //       );
+
+  //       Logger().i("Scrolled to ayah ${_ayahKeys[index].currentContext}");
+  //     } else {
+  //       // 🔹 Jika GlobalKey gagal, fallback ke scroll biasa
+  //       _scrollController.animateTo(
+  //         index * 150.0, // 🔹 Estimasi posisi scroll
+  //         duration: const Duration(milliseconds: 600),
+  //         curve: Curves.easeInOut,
+  //       );
+  //     }
+  //   });
+  // }
 
   @override
   void dispose() {

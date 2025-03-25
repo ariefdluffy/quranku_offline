@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quranku_offline/core/models/surah_model.dart';
 import 'package:quranku_offline/core/providers/quran_provider.dart';
+import 'package:quranku_offline/features/surah/search_result_page.dart';
 import 'package:quranku_offline/features/surah/surah_page.dart';
 import 'package:quranku_offline/features/surah/surah_page_new.dart';
 
@@ -36,7 +37,7 @@ class SearchHelper {
       // ✅ Cek apakah nomor ayat valid
       if (ayahNum != null && (ayahNum < 1 || ayahNum > surah.jumlahAyat)) {
         updateError(
-            "Nomor ayat tidak ditemukan dalam Surah ${surah.namaLatin}");
+            "Nomor ayat $ayahNum tidak ditemukan dalam Surah ${surah.namaLatin}");
         return;
       }
 
@@ -45,9 +46,8 @@ class SearchHelper {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => SurahPageNew(
-            surah: surah,
-            targetAyah: ayahNum,
+          builder: (context) => SearchResultPage(
+            searchResults: [surah],
           ),
         ),
       );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:logger/logger.dart';
 import 'package:quranku_offline/core/models/ayah_model.dart';
 import 'package:quranku_offline/core/models/surah_model.dart';
 import 'package:quranku_offline/core/providers/quran_provider.dart';
@@ -30,8 +31,9 @@ class _SurahPageState extends ConsumerState<SurahPage> {
     final index =
         widget.surah.ayat.indexWhere((ayah) => ayah.nomorAyat == nomorAyat);
 
-    if (index != -1) {
-      // 🔹 Dapatkan posisi widget berdasarkan GlobalKey
+    if (index != -1 && mounted) {
+      // ✅ Pastikan widget masih aktif
+
       final key = _ayahKeys[index];
       final context = key.currentContext;
 
@@ -51,6 +53,7 @@ class _SurahPageState extends ConsumerState<SurahPage> {
     super.initState();
 
     _ayahKeys = List.generate(widget.surah.ayat.length, (_) => GlobalKey());
+    // Logger().i("Ayah Keys", error: _ayahKeys);
 
     _loadAyat();
     _scrollController = ref.read(scrollControllerProvider);
@@ -77,11 +80,6 @@ class _SurahPageState extends ConsumerState<SurahPage> {
     }
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   Future<void> _loadAyat() async {
     await Future.delayed(
         const Duration(milliseconds: 300)); // 🔹 Simulasi loading ayat
@@ -98,6 +96,12 @@ class _SurahPageState extends ConsumerState<SurahPage> {
         }
       });
     }
+  }
+
+  @override
+  void dispose() {
+    // _scrollController.dispose();
+    super.dispose();
   }
 
   @override

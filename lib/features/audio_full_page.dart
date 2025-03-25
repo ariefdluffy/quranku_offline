@@ -293,8 +293,7 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
                     color: Colors.white,
                     size: 20,
                   ),
-                  label: const Text("Hapus semua surah",
-                      style: TextStyle(fontSize: 10)),
+                  label: const Text("Hapus", style: TextStyle(fontSize: 12)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.redAccent,
                     foregroundColor: Colors.white,

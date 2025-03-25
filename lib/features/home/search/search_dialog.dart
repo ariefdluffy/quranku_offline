@@ -31,7 +31,8 @@ class _SearchDialogState extends ConsumerState<SearchDialog> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       title: const Text(
         "Cari Surah / Ayat",
-        style: TextStyle(color: Colors.teal, fontWeight: FontWeight.bold),
+        style: TextStyle(
+            color: Colors.teal, fontWeight: FontWeight.bold, fontSize: 18),
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
