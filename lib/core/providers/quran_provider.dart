@@ -25,7 +25,7 @@ class QuranNotifier extends StateNotifier<List<Surah>> {
   Future<void> loadAllSurah() async {
     try {
       final service = QuranService();
-      state = await service.fetchAllSurah();
+      state = await service.getAllSurah();
     } catch (e) {
       Logger().e("Error loading Quran data: $e");
     }

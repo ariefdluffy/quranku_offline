@@ -11,11 +11,9 @@ class SearchHelper {
     BuildContext context,
     WidgetRef ref,
     String surahName,
-    String ayahNumber,
     void Function(String?) updateError,
   ) {
     final surahList = ref.read(quranProvider);
-    int? ayahNum = int.tryParse(ayahNumber);
 
     final surah = surahList.firstWhere(
       (s) =>
@@ -34,13 +32,6 @@ class SearchHelper {
     );
 
     if (surah.nomor != -1) {
-      // ✅ Cek apakah nomor ayat valid
-      if (ayahNum != null && (ayahNum < 1 || ayahNum > surah.jumlahAyat)) {
-        updateError(
-            "Nomor ayat $ayahNum tidak ditemukan dalam Surah ${surah.namaLatin}");
-        return;
-      }
-
       updateError(null); // ✅ Hapus error jika pencarian berhasil
       Navigator.pop(context); // ✅ Tutup dialog
       Navigator.push(

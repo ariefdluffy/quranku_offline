@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:quranku_offline/core/models/surah_model.dart';
 import 'package:quranku_offline/core/providers/ad_provider.dart';
 import 'package:quranku_offline/core/providers/quran_provider.dart';
 import 'package:quranku_offline/features/dzikir_pagi/dzikir_pagi_page.dart';
@@ -9,9 +7,7 @@ import 'package:quranku_offline/features/bookmark_page.dart';
 import 'package:quranku_offline/features/dzikir_petang/dzikir_petang_page.dart';
 import 'package:quranku_offline/features/dzikir_lainnya/home_dzikri_lainnya_page.dart';
 import 'package:quranku_offline/features/home/search/search_dialog.dart';
-import 'package:quranku_offline/features/surah/search_result_page.dart';
-import 'package:quranku_offline/features/surah/surah_page.dart';
-import 'package:quranku_offline/features/surah/surah_page_new.dart';
+import 'package:quranku_offline/features/surah/surah_list_page.dart';
 import 'package:quranku_offline/features/widget/shimmer_loading.dart';
 import 'package:quranku_offline/features/widget/surah_card.dart';
 
@@ -122,17 +118,9 @@ class HomePage extends ConsumerWidget {
                 ? const ShimmerLoading(
                     itemCount: 9,
                   )
-                : Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 10),
-                    child: ListView.builder(
-                      itemCount: surahList.length,
-                      itemBuilder: (context, index) {
-                        final surah = surahList[index];
-                        return SurahCard(surah: surah);
-                      },
-                    ),
-                  ),
+                : const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    child: SurahListPage()),
           ),
         ],
       ),
@@ -142,7 +130,7 @@ class HomePage extends ConsumerWidget {
         onPressed: () {
           showDialog(
             context: context,
-            builder: (context) => const SearchDialog(), // ✅ Hapus `const`
+            builder: (context) => const SearchDialog(),
           );
         },
         // onPressed: () {

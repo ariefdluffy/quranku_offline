@@ -41,6 +41,7 @@ void main() async {
           AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
 
+  debugProfileBuildsEnabled = true;
   runApp(const ProviderScope(child: MainApp()));
 }
 

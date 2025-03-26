@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -56,10 +57,11 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
     }
   }
 
+  
   @override
   void dispose() {
     surahController.dispose();
-    _bannerAd?.dispose(); // ✅ Pastikan iklan dihapus saat widget dihancurkan
+    _bannerAd?.dispose();
     super.dispose();
   }
 

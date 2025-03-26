@@ -64,7 +64,7 @@ class SearchResultPage extends ConsumerWidget {
                     //   ),
                     // ),
                     title: Text(
-                      "QS. ${surah.namaLatin}: ${surah.nama}",
+                      "QS. ${surah.namaLatin}:${surah.nomor} | ${surah.nama}",
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,

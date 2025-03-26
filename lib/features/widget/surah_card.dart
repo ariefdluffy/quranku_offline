@@ -16,7 +16,7 @@ class SurahCard extends StatelessWidget {
         Navigator.push(
           context,
           PageRouteBuilder(
-            transitionDuration: const Duration(milliseconds: 300),
+            transitionDuration: const Duration(milliseconds: 500),
             pageBuilder: (context, animation, secondaryAnimation) =>
                 SurahPageNew(surah: surah),
             transitionsBuilder:

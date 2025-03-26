@@ -12,13 +12,11 @@ class SearchDialog extends ConsumerStatefulWidget {
 
 class _SearchDialogState extends ConsumerState<SearchDialog> {
   final TextEditingController surahController = TextEditingController();
-  final TextEditingController ayahController = TextEditingController();
   String? errorMessage;
 
   @override
   void dispose() {
     surahController.dispose();
-    ayahController.dispose();
     super.dispose();
   }
 
@@ -32,7 +30,7 @@ class _SearchDialogState extends ConsumerState<SearchDialog> {
       title: const Text(
         "Cari Surah / Ayat",
         style: TextStyle(
-            color: Colors.teal, fontWeight: FontWeight.bold, fontSize: 18),
+            color: Colors.teal, fontWeight: FontWeight.bold, fontSize: 16),
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -110,29 +108,6 @@ class _SearchDialogState extends ConsumerState<SearchDialog> {
           ),
           const SizedBox(height: 10),
 
-          // 🔹 Input Nomor Ayat (Opsional)
-          TextField(
-            controller: ayahController,
-            keyboardType: TextInputType.number,
-            onChanged: (_) => setState(() {}), // ✅ Perbarui UI saat mengetik
-            decoration: InputDecoration(
-              hintText: "Masukkan nomor ayat (opsional)",
-              prefixIcon:
-                  const Icon(Icons.format_list_numbered, color: Colors.teal),
-              suffixIcon: ayahController.text.isNotEmpty
-                  ? IconButton(
-                      icon: const Icon(Icons.close, color: Colors.grey),
-                      onPressed: () {
-                        ayahController.clear();
-                        setState(() {});
-                      },
-                    )
-                  : null, // 🔹 Tampilkan tombol "X" hanya saat ada teks
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-            ),
-          ),
-
           // 🔹 Tampilkan Pesan Error jika Surah/Ayat Tidak Ditemukan
           if (errorMessage != null) ...[
             const SizedBox(height: 10),
@@ -156,7 +131,7 @@ class _SearchDialogState extends ConsumerState<SearchDialog> {
               context,
               ref,
               surahController.text,
-              ayahController.text,
+
               (msg) =>
                   setState(() => errorMessage = msg), // ✅ Update errorMessage
             );

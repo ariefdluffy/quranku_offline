@@ -5,7 +5,6 @@ import 'package:quranku_offline/core/providers/quran_provider.dart';
 import 'package:quranku_offline/features/bookmark_page.dart';
 import 'package:quranku_offline/features/widget/ayat_text_widget.dart';
 import 'package:quranku_offline/features/widget/shimmer_loading.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
 
 class LengkapPage extends ConsumerWidget {
   const LengkapPage({super.key});
@@ -132,9 +131,11 @@ class LengkapPage extends ConsumerWidget {
           ),
           ElevatedButton(
             onPressed: currentPage < totalPages - 1
-                ? () => ref
-                    .read(quranPaginationProvider.notifier)
-                    .nextPage(totalPages)
+                ? () {
+                    ref
+                        .read(quranPaginationProvider.notifier)
+                        .nextPage(totalPages);
+                  }
                 : null,
             child: const Text("Next"),
           ),

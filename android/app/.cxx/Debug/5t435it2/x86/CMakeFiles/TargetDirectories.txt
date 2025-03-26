@@ -1,0 +1,2 @@
+D:/DATAKU/Pemograman/Flutter/PROJECT FLUTTER/Latihan/quranku_offline/android/app/.cxx/Debug/5t435it2/x86/CMakeFiles/edit_cache.dir
+D:/DATAKU/Pemograman/Flutter/PROJECT FLUTTER/Latihan/quranku_offline/android/app/.cxx/Debug/5t435it2/x86/CMakeFiles/rebuild_cache.dir

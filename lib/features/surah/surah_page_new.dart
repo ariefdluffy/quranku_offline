@@ -33,7 +33,7 @@ class _SurahPageState extends ConsumerState<SurahPageNew> {
     super.initState();
     // 🔹 Inisialisasi GlobalKey untuk setiap ayat
     _ayahKeys = List.generate(widget.surah.ayat.length, (_) => GlobalKey());
-    Logger().i("_ayahKeys: ${_ayahKeys}");
+    // Logger().i("_ayahKeys: ${_ayahKeys}");
 
     _scrollController = ScrollController()..addListener(_onScroll);
 

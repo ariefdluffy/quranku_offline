@@ -253,11 +253,11 @@ class _SurahPageState extends ConsumerState<SurahPage> {
       ),
 
       // 🔹 Gunakan Widget AudioPlayer di Bawah
-      bottomNavigationBar: SafeArea(
-        child: AudioPlayerWidget(
-          audioUrl: widget.surah.audioFull['04'], // Pilih Qari tertentu
-        ),
-      ),
+      // bottomNavigationBar: SafeArea(
+      //   child: AudioPlayerWidget(
+      //     audioUrl: widget.surah.audioFull['04'], // Pilih Qari tertentu
+      //   ),
+      // ),
     );
   }
 }
