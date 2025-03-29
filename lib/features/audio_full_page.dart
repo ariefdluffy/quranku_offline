@@ -57,7 +57,6 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
     }
   }
 
-  
   @override
   void dispose() {
     surahController.dispose();
@@ -278,63 +277,48 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
             ),
             Column(
               children: [
-                Text(
-                  "Total Ukuran File: $downloadedSize",
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.teal,
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                ElevatedButton.icon(
-                  icon: const Icon(
-                    Icons.delete,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                  label: const Text("Hapus", style: TextStyle(fontSize: 12)),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.redAccent,
-                    foregroundColor: Colors.white,
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                  ),
-                  onPressed: () async {
-                    bool? confirmDelete = await showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: const Text("Hapus Semua File?"),
-                          content: const Text(
-                              "Apakah Anda yakin ingin menghapus semua file surah yang telah diunduh?"),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context, false),
-                              child: const Text("Batal"),
-                            ),
-                            ElevatedButton(
-                              onPressed: () => Navigator.pop(context, true),
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.redAccent),
-                              child: const Text(
-                                "Hapus",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    );
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Total Ukuran File: $downloadedSize",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.teal,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    AnimatedContainer(
+                      duration: Duration(milliseconds: 300),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.2),
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: IconButton(
+                        onPressed: () async {
+                          bool? confirmDelete = await showDialog(
+                            context: context,
+                            builder: (context) {
+                              return const ConfirmDialog();
+                            },
+                          );
 
-                    if (confirmDelete == true) {
-                      await deleteAllSurahFiles(context, ref);
-                    }
-                  },
+                          if (confirmDelete == true) {
+                            await deleteAllSurahFiles(context, ref);
+                          }
+                        },
+                        icon: const Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -379,6 +363,35 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioFullPage> {
         color: Colors.black54,
         borderRadius: BorderRadius.circular(5),
       ),
+    );
+  }
+}
+
+class ConfirmDialog extends StatelessWidget {
+  const ConfirmDialog({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text("Hapus Semua File?"),
+      content: const Text(
+          "Apakah Anda yakin ingin menghapus semua file surah yang telah diunduh?"),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: const Text("Batal"),
+        ),
+        ElevatedButton(
+          onPressed: () => Navigator.pop(context, true),
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+          child: const Text(
+            "Hapus",
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ],
     );
   }
 }
