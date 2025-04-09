@@ -96,9 +96,9 @@ class AyahTextWidget extends StatelessWidget {
             TextSpan(
               children: [
                 TextSpan(
-                  text: " ${ayah.teksArab} ",
-                  style: GoogleFonts.lateef(
-                    fontSize: 40,
+                  text: " ${ayah.teksArab}",
+                  style: GoogleFonts.amiriQuran(
+                    fontSize: 34,
                     fontWeight: FontWeight.w500,
                     color: Colors.black,
                   ),

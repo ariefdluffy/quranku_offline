@@ -231,10 +231,10 @@ class _SurahPageState extends ConsumerState<SurahPageNew> {
               child: Container(
                 key: _ayahKeys[index],
                 margin: const EdgeInsets.only(bottom: 8),
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: Colors.teal.shade50,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(12),
                   boxShadow: const [
                     BoxShadow(
                         color: Colors.black12, blurRadius: 4, spreadRadius: 1),
@@ -248,7 +248,7 @@ class _SurahPageState extends ConsumerState<SurahPageNew> {
                         color: Colors.teal.shade300,
                         indent: 10,
                         endIndent: 10),
-                    // const SizedBox(width: 5),
+                    const SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -274,7 +274,7 @@ class _SurahPageState extends ConsumerState<SurahPageNew> {
                             }
                           },
                         ),
-                        const SizedBox(width: 5),
+                        const SizedBox(width: 10),
                         Expanded(
                           child: RichText(
                             textDirection: TextDirection.rtl,
@@ -283,8 +283,8 @@ class _SurahPageState extends ConsumerState<SurahPageNew> {
                               children: [
                                 TextSpan(
                                   text: " ${ayah.teksArab} ",
-                                  style: GoogleFonts.lateef(
-                                    fontSize: 38,
+                                  style: GoogleFonts.amiriQuran(
+                                    fontSize: 32,
                                     fontWeight: FontWeight.w500,
                                     color: Colors.black,
                                   ),
@@ -318,6 +318,7 @@ class _SurahPageState extends ConsumerState<SurahPageNew> {
                         const SizedBox(width: 10),
                       ],
                     ),
+                    const SizedBox(height: 5),
                     Divider(
                         thickness: 1,
                         color: Colors.teal.shade300,
